@@ -2,8 +2,8 @@ import Config
 
 # Configure your database
 config :payment_server, PaymentServer.Repo,
-  username: "postgres",
-  password: "postgres",
+  username: System.get_env("DB_USERNAME") || "postgres",
+  password: System.get_env("DB_PASSWORD") || "postgres",
   hostname: "localhost",
   database: "payment_server_dev",
   stacktrace: true,
