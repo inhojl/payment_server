@@ -1,10 +1,12 @@
 defmodule PaymentServer.Accounts.User do
+  alias PaymentServer.Accounts.Wallet
   use Ecto.Schema
   import Ecto.Changeset
 
   schema "users" do
     field :email, :string
 
+    has_many :wallets, Wallet
     timestamps(type: :utc_datetime)
   end
 
