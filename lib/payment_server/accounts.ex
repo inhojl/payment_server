@@ -26,22 +26,8 @@ defmodule PaymentServer.Accounts do
     Actions.find(User, params)
   end
 
-  @doc """
-  Creates a user.
-
-  ## Examples
-
-      iex> create_user(%{field: value})
-      {:ok, %User{}}
-
-      iex> create_user(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_user(attrs \\ %{}) do
-    %User{}
-    |> User.changeset(attrs)
-    |> Repo.insert()
+  def create_user(params) do
+    Actions.create(User, params)
   end
 
   @doc """
@@ -103,23 +89,8 @@ defmodule PaymentServer.Accounts do
     Actions.find(Wallet, params)
   end
 
-
-  @doc """
-  Creates a wallet.
-
-  ## Examples
-
-      iex> create_wallet(%{field: value})
-      {:ok, %Wallet{}}
-
-      iex> create_wallet(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_wallet(attrs \\ %{}) do
-    %Wallet{}
-    |> Wallet.changeset(attrs)
-    |> Repo.insert()
+  def create_wallet(params) do
+    Actions.create(Wallet, params)
   end
 
   @doc """

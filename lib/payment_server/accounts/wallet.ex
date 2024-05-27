@@ -4,7 +4,7 @@ defmodule PaymentServer.Accounts.Wallet do
   import Ecto.Changeset
 
   schema "wallets" do
-    field :balance, :decimal
+    field :balance, :decimal, default: Decimal.new("0.00")
     field :currency, :string
 
     belongs_to :user, User
@@ -14,7 +14,7 @@ defmodule PaymentServer.Accounts.Wallet do
   @doc false
   def changeset(wallet, attrs) do
     wallet
-    |> cast(attrs, [:currency, :balance])
-    |> validate_required([:currency, :balance])
+    |> cast(attrs, [:user_id, :currency, :balance])
+    |> validate_required([:user_id, :currency, :balance])
   end
 end

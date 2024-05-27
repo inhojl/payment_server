@@ -22,5 +22,8 @@ defmodule PaymentServerWeb.Resolvers.Wallet do
     Accounts.list_wallets(params)
   end
 
+  def create(params, _) do
+    Accounts.create_wallet(params)
+  end
 
 end
