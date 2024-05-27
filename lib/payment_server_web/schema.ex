@@ -4,10 +4,12 @@ defmodule PaymentServerWeb.Schema do
   import_types PaymentServerWeb.Types.User
   import_types PaymentServerWeb.Types.Wallet
   import_types PaymentServerWeb.Schema.Queries.User
+  import_types PaymentServerWeb.Schema.Queries.Wallet
 
   # queries
   query do
     import_fields :user_queries
+    import_fields :wallet_queries
   end
 
   # mutations

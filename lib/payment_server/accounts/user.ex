@@ -15,5 +15,6 @@ defmodule PaymentServer.Accounts.User do
     user
     |> cast(attrs, [:email])
     |> validate_required([:email])
+    |> cast_assoc(:wallets)
   end
 end

@@ -93,34 +93,16 @@ defmodule PaymentServer.Accounts do
 
   alias PaymentServer.Accounts.Wallet
 
-  @doc """
-  Returns the list of wallets.
 
-  ## Examples
-
-      iex> list_wallets()
-      [%Wallet{}, ...]
-
-  """
-  def list_wallets do
-    Repo.all(Wallet)
+  def list_wallets(params) do
+    {:ok, Actions.all(Wallet, params)}
   end
 
-  @doc """
-  Gets a single wallet.
 
-  Raises `Ecto.NoResultsError` if the Wallet does not exist.
+  def find_wallet(params) do
+    Actions.find(Wallet, params)
+  end
 
-  ## Examples
-
-      iex> get_wallet!(123)
-      %Wallet{}
-
-      iex> get_wallet!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_wallet!(id), do: Repo.get!(Wallet, id)
 
   @doc """
   Creates a wallet.
