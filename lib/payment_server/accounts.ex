@@ -7,6 +7,7 @@ defmodule PaymentServer.Accounts do
   alias PaymentServer.Repo
 
   alias PaymentServer.Accounts.User
+  alias EctoShorts.Actions
 
   @doc """
   Returns the list of users.
@@ -17,25 +18,13 @@ defmodule PaymentServer.Accounts do
       [%User{}, ...]
 
   """
-  def list_users do
-    Repo.all(User)
+  def list_users(params) do
+    {:ok, Actions.all(User, params)}
   end
 
-  @doc """
-  Gets a single user.
-
-  Raises `Ecto.NoResultsError` if the User does not exist.
-
-  ## Examples
-
-      iex> get_user!(123)
-      %User{}
-
-      iex> get_user!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_user!(id), do: Repo.get!(User, id)
+  def find_user(params) do
+    Actions.find(User, params)
+  end
 
   @doc """
   Creates a user.

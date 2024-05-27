@@ -55,7 +55,13 @@ defmodule PaymentServer.MixProject do
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.2"},
       {:decimal, "~> 2.1"},
-      {:faker, "~> 0.18", only: :dev}
+      {:faker, "~> 0.18", only: :dev},
+      {:absinthe, "~> 1.7"},
+      {:absinthe_plug, "~> 1.5"},
+      {:phoenix_pubsub, "~> 2.0"},
+      {:absinthe_phoenix, "~> 2.0"},
+      {:ecto_shorts, "~> 2.3"},
+      {:dataloader, "~> 2.0"}
     ]
   end
 
