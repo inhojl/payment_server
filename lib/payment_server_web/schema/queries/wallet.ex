@@ -5,6 +5,8 @@ defmodule PaymentServerWeb.Schema.Queries.Wallet do
   object :wallet_queries do
     field :wallet, :wallet do
       arg :id, :id
+      arg :user_id, :id
+      arg :currency, :string
 
       resolve &Resolvers.Wallet.find/2
     end

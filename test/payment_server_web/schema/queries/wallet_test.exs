@@ -1,16 +1,16 @@
 defmodule PaymentServerWeb.Schema.Queries.WalletTest do
-  use PaymentServer.DataCase
+  use PaymentServer.DataCase, async: true
 
   alias PaymentServer.Accounts
   alias PaymentServerWeb.Schema
 
   @wallet_query """
-  query FindWallet($id: ID) {
-    wallet(id: $id) {
+  query FindWallet($id: ID, $userId: ID, $currency: String) {
+    wallet(id: $id, userId: $userId, currency: $currency) {
       id
       currency
       balance
-      user_id
+      userId
     }
   }
 
@@ -22,7 +22,7 @@ defmodule PaymentServerWeb.Schema.Queries.WalletTest do
       id
       currency
       balance
-      user_id
+      userId
     }
   }
 
@@ -59,6 +59,16 @@ defmodule PaymentServerWeb.Schema.Queries.WalletTest do
       assert {:ok, %{data: data}} = Absinthe.run(@wallet_query, Schema,
       variables: %{
         "id" => wallet1.id
+      })
+
+      assert data["wallet"]["id"] === to_string(wallet1.id)
+    end
+
+    test "fetch wallet by user id and currency", %{user1: %{wallets: [wallet1 | _]}} do
+      assert {:ok, %{data: data}} = Absinthe.run(@wallet_query, Schema,
+      variables: %{
+        "userId" => wallet1.user_id,
+        "currency" => wallet1.currency
       })
 
       assert data["wallet"]["id"] === to_string(wallet1.id)
