@@ -16,5 +16,7 @@ defmodule PaymentServer.Accounts.Wallet do
     wallet
     |> cast(attrs, [:user_id, :currency, :balance])
     |> validate_required([:user_id, :currency, :balance])
+    |> validate_number(:balance, greater_than: 0)
   end
+
 end

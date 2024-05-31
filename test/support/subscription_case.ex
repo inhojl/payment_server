@@ -14,7 +14,7 @@ defmodule PaymentServerWeb.SubscriptionCase do
         schema: PaymentServerWeb.Schema
 
       setup do
-        {:ok, socket} = Phoenix.ChannelTest.connect(PaymentServerWeb.Socket, %{})
+        {:ok, socket} = Phoenix.ChannelTest.connect(PaymentServerWeb.UserSocket, %{})
         {:ok, socket} = Absinthe.Phoenix.SubscriptionTest.join_absinthe(socket)
 
         {:ok, %{socket: socket}}

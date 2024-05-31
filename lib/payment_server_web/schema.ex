@@ -3,10 +3,12 @@ defmodule PaymentServerWeb.Schema do
 
   import_types PaymentServerWeb.Types.User
   import_types PaymentServerWeb.Types.Wallet
+  import_types PaymentServerWeb.Types.ExchangeRate
   import_types PaymentServerWeb.Schema.Queries.User
   import_types PaymentServerWeb.Schema.Queries.Wallet
   import_types PaymentServerWeb.Schema.Mutations.User
   import_types PaymentServerWeb.Schema.Mutations.Wallet
+  import_types PaymentServerWeb.Schema.Subscriptions.ExchangeRate
 
   # queries
   query do
@@ -21,6 +23,9 @@ defmodule PaymentServerWeb.Schema do
   end
 
   # subscriptions
+  subscription do
+    import_fields :exchange_rate_subscriptions
+  end
 
   def context(ctx) do
     source = Dataloader.Ecto.new(PaymentServer.Repo)

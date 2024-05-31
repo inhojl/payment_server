@@ -26,4 +26,24 @@ defmodule PaymentServerWeb.Resolvers.Wallet do
     Accounts.create_wallet(params)
   end
 
+  def send_money(%{
+    recipient_id: recipient_id,
+    recipient_currency: recipient_currency,
+    sender_id: sender_id,
+    sender_currency: sender_currency,
+    amount: amount}, _) do
+
+    amount = Decimal.new(amount)
+    sender_wallet = %{
+      user_id: sender_id,
+      currency: sender_currency
+    }
+    recipient_wallet = %{
+      user_id: recipient_id,
+      currency: recipient_currency
+    }
+
+    Accounts.send_money(sender_wallet, recipient_wallet, amount)
+  end
+
 end

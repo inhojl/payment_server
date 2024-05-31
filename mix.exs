@@ -61,7 +61,8 @@ defmodule PaymentServer.MixProject do
       {:phoenix_pubsub, "~> 2.0"},
       {:absinthe_phoenix, "~> 2.0"},
       {:ecto_shorts, "~> 2.3"},
-      {:dataloader, "~> 2.0"}
+      {:dataloader, "~> 2.0"},
+      {:req, "~> 0.5.0"}
     ]
   end
 

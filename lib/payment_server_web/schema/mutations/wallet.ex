@@ -9,6 +9,17 @@ defmodule PaymentServerWeb.Schema.Mutations.Wallet do
 
       resolve &Resolvers.Wallet.create/2
     end
+
+    field :send_money, :wallet do
+      arg :recipient_id, non_null(:id)
+      arg :recipient_currency, non_null(:string)
+      arg :sender_id, non_null(:id)
+      arg :sender_currency, non_null(:id)
+      arg :amount, non_null(:string)
+
+      resolve &Resolvers.Wallet.send_money/2
+    end
+
   end
 
 end

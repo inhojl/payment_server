@@ -5,6 +5,7 @@ defmodule PaymentServer.Accounts do
 
   import Ecto.Query, warn: false
   alias PaymentServer.Repo
+  alias Ecto.Multi
 
   alias PaymentServer.Accounts.User
   alias EctoShorts.Actions
@@ -105,10 +106,8 @@ defmodule PaymentServer.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_wallet(%Wallet{} = wallet, attrs) do
-    wallet
-    |> Wallet.changeset(attrs)
-    |> Repo.update()
+  def update_wallet(%Wallet{} = wallet, params) do
+    Actions.update(Wallet, wallet, params)
   end
 
   @doc """
@@ -138,5 +137,16 @@ defmodule PaymentServer.Accounts do
   """
   def change_wallet(%Wallet{} = wallet, attrs \\ %{}) do
     Wallet.changeset(wallet, attrs)
+  end
+
+  def send_money(sender_wallet, recipient_wallet, amount) do
+    with {:ok, sender_wallet} <- find_wallet(sender_wallet),
+         {:ok, recipient_wallet} <- find_wallet(recipient_wallet)
+    do
+      Multi.new()
+      |> Multi.update(:update_sender_wallet, Wallet.changeset(sender_wallet, %{balance: Decimal.sub(sender_wallet.balance, amount)}))
+      |> Multi.update(:update_recipient_wallet, Wallet.changeset(recipient_wallet, %{balance: Decimal.sub(recipient_wallet.balance, amount)}))
+      |> Repo.transaction()
+    end
   end
 end
