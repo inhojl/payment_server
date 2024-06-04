@@ -24,6 +24,8 @@ defmodule PaymentServerWeb.Schema.Mutations.WalletTest do
         "currency" => "USD"
       })
 
+      IO.inspect data
+
       assert data["createWallet"]["userId"] === to_string(user.id)
       assert data["createWallet"]["currency"] === "USD"
     end

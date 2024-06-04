@@ -1,14 +1,17 @@
 defmodule PaymentServerWeb.Schema do
+  alias PaymentServerWeb.Middlewares
   use Absinthe.Schema
 
   import_types PaymentServerWeb.Types.User
   import_types PaymentServerWeb.Types.Wallet
   import_types PaymentServerWeb.Types.ExchangeRate
+  import_types PaymentServerWeb.Types.Transaction
   import_types PaymentServerWeb.Schema.Queries.User
   import_types PaymentServerWeb.Schema.Queries.Wallet
   import_types PaymentServerWeb.Schema.Mutations.User
   import_types PaymentServerWeb.Schema.Mutations.Wallet
   import_types PaymentServerWeb.Schema.Subscriptions.ExchangeRate
+  import_types PaymentServerWeb.Schema.Subscriptions.Transaction
 
   # queries
   query do
@@ -25,6 +28,7 @@ defmodule PaymentServerWeb.Schema do
   # subscriptions
   subscription do
     import_fields :exchange_rate_subscriptions
+    import_fields :transaction_subscriptions
   end
 
   def context(ctx) do
@@ -35,6 +39,10 @@ defmodule PaymentServerWeb.Schema do
 
   def plugins do
     [Absinthe.Middleware.Dataloader] ++ Absinthe.Plugin.defaults()
+  end
+
+  def middleware(middleware, field, object) do
+    middleware ++ [Middlewares.ErrorHandler]
   end
 
 end
