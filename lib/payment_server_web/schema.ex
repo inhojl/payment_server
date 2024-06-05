@@ -3,6 +3,7 @@ defmodule PaymentServerWeb.Schema do
   use Absinthe.Schema
 
 
+  import_types PaymentServerWeb.Types.IntegerId
   import_types PaymentServerWeb.Types.Decimal
   import_types PaymentServerWeb.Types.User
   import_types PaymentServerWeb.Types.Wallet

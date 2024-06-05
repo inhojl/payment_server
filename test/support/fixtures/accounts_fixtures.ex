@@ -32,4 +32,10 @@ defmodule PaymentServer.AccountsFixtures do
 
     wallet
   end
+
+
+  def exchange_rate_fixture() do
+    Decimal.new("2")
+  end
+
 end

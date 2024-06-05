@@ -22,7 +22,7 @@ defmodule PaymentServer.Application do
       # Start to serve requests, typically the last entry
       PaymentServerWeb.Endpoint,
       {Absinthe.Subscription, PaymentServerWeb.Endpoint},
-    ] ++ init_exchange_rate_servers()
+    ] ++ init_exchange_rate_servers(Mix.env())
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
@@ -39,7 +39,8 @@ defmodule PaymentServer.Application do
   end
 
 
-defp init_exchange_rate_servers do
+defp init_exchange_rate_servers(:test), do: []
+defp init_exchange_rate_servers(_) do
   for from_currency <- Config.currencies(),
       to_currency <- Config.currencies(),
       from_currency != to_currency do

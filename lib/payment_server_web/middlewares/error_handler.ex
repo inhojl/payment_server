@@ -11,16 +11,22 @@ defmodule PaymentServerWeb.Middlewares.ErrorHandler do
     %{resolution | errors: transformed_errors}
   end
 
-  defp transform_error(%ErrorMessage{code: :internal_server_error} = error) do
+  defp transform_error(%ErrorMessage{details: {:internal, _}} = error), do: handle_internal_error(error)
+  defp transform_error(%ErrorMessage{details: :internal} = error), do: handle_internal_error(error)
+  defp transform_error(%ErrorMessage{} = error) do
+    Logger.debug(ErrorMessage.to_jsonable_map(error))
+    %{
+      code: error.code,
+      message: error.message
+    }
+  end
+
+  defp handle_internal_error(error) do
     Logger.error(ErrorMessage.to_jsonable_map(error))
     %{
       code: :internal_server_error,
       message: "Internal server error"
     }
-  end
-
-  defp transform_error(%ErrorMessage{} = error) do
-    ErrorMessage.to_jsonable_map(error)
   end
 
 

@@ -7,8 +7,6 @@ defmodule PaymentServerWeb.Resolvers.User do
   end
 
   def find(%{id: id}, _) do
-    id = String.to_integer(id)
-
     Accounts.find_user(%{id: id})
   end
 

@@ -6,7 +6,7 @@ defmodule PaymentServerWeb.Schema.Queries.UserTest do
 
 
   @user_query """
-  query FindUser($id: ID, $email: String) {
+  query FindUser($id: IntegerId, $email: String) {
     user(id: $id, email: $email) {
       id,
       email
@@ -15,7 +15,7 @@ defmodule PaymentServerWeb.Schema.Queries.UserTest do
   """
 
   @all_users_query """
-  query AllUsers($id: ID, $email: String, $before: ID, $after: ID, $first: Int) {
+  query AllUsers($id: IntegerId, $email: String, $before: IntegerId, $after: IntegerId, $first: Int) {
     users(id: $id, email: $email, before: $before, after: $after, first: $first) {
       id,
       email
@@ -58,7 +58,7 @@ defmodule PaymentServerWeb.Schema.Queries.UserTest do
         "id" => user1.id
       })
 
-      assert data["user"]["id"] === to_string(user1.id)
+      assert data["user"]["id"] === user1.id
     end
 
     test "fetch user by email", %{user1: user1} do
@@ -90,13 +90,13 @@ defmodule PaymentServerWeb.Schema.Queries.UserTest do
         }
       )
 
-      assert List.first(data["users"])["id"] === to_string(user1.id)
+      assert List.first(data["users"])["id"] === user1.id
     end
 
     test "fetch users before id", %{user1: user1, user2: user2} do
       assert {:ok, %{data: data}} = Absinthe.run(@all_users_query, Schema,
       variables: %{
-        "before" => user2.id
+        "before" => to_string(user2.id)
       })
 
       assert List.first(data["users"])["email"] === user1.email
@@ -105,7 +105,7 @@ defmodule PaymentServerWeb.Schema.Queries.UserTest do
     test "fetch users after id", %{user2: user2, user3: user3} do
       assert {:ok, %{data: data}} = Absinthe.run(@all_users_query, Schema,
       variables: %{
-        "after" => user2.id
+        "after" => to_string(user2.id)
       })
 
       assert List.first(data["users"])["email"] === user3.email

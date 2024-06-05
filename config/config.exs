@@ -7,6 +7,14 @@
 # General application configuration
 import Config
 
+
+# Setup stubs
+if Mix.env === :test do
+  config :payment_server, alpha_vantage_module: PaymentServer.Support.AlphaVantage
+else
+  config :payment_server, alpha_vantage_module: PaymentServer.ExternalApis.AlphaVantage
+end
+
 config :payment_server,
   currencies: [:USD, :KRW, :AUD]
 

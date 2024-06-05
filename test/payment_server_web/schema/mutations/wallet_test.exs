@@ -4,7 +4,7 @@ defmodule PaymentServerWeb.Schema.Mutations.WalletTest do
   use PaymentServer.DataCase
 
   @create_wallet """
-  mutation CreateWallet($userId: ID!, $currency: String!) {
+  mutation CreateWallet($userId: IntegerId!, $currency: String!) {
     createWallet(userId: $userId, currency: $currency) {
       id
       userId
@@ -20,7 +20,7 @@ defmodule PaymentServerWeb.Schema.Mutations.WalletTest do
 
       assert {:ok, %{data: data}} = Absinthe.run(@create_wallet, Schema,
       variables: %{
-        "userId" => user.id,
+        "userId" => to_string(user.id),
         "currency" => "USD"
       })
 

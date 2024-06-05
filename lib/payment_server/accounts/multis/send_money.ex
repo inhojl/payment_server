@@ -119,7 +119,7 @@ defmodule PaymentServer.Accounts.Multis.SendMoney do
 
   defp handle_error(module, {function_name, arity}, failed_operation, failed_value, changes_so_far) do
     message = "[#{module}.#{function_name}/#{arity}] Multi transaction failed - #{failed_operation}: #{failed_value}"
-    {:error, ErrorMessage.internal_server_error(message, changes_so_far)}
+    {:error, ErrorMessage.internal_server_error(message, {:internal, changes_so_far})}
   end
 
 end

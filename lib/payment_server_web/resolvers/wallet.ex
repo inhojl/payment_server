@@ -4,14 +4,10 @@ defmodule PaymentServerWeb.Resolvers.Wallet do
   alias PaymentServer.Accounts
 
   def find(%{user_id: user_id, currency: currency}, _) do
-    user_id = String.to_integer(user_id)
-
     Accounts.find_wallet(%{user_id: user_id, currency: currency})
   end
 
   def find(%{id: id}, _) do
-    id = String.to_integer(id)
-
     Accounts.find_wallet(%{id: id})
   end
 
@@ -38,8 +34,6 @@ defmodule PaymentServerWeb.Resolvers.Wallet do
   end
 
   def calculate_total_worth(%{user_id: user_id, currency: currency}, _) do
-    user_id = String.to_integer(user_id)
-
     Accounts.calculate_total_worth(user_id, currency)
   end
 

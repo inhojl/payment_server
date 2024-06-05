@@ -6,13 +6,10 @@ defmodule PaymentServerWeb.Middlewares.CurrencyValidator do
   @currency_args_to_validate [:currency, :recipient_currency, :sender_currency]
 
   def call(%{arguments: args} = resolution, _config) do
-    # { currency: "USD" }
-
-    invalid_args = args
-      |> filter_currency_args()
-      |> filter_invalid_args()
-
-    case invalid_args do
+    args
+    |> filter_currency_args()
+    |> filter_invalid_args()
+    |> case do
       [] -> resolution
       invalid_args -> Absinthe.Resolution.put_result(resolution, {:error, ErrorMessage.bad_request(error_message(invalid_args), invalid_args)})
     end

@@ -1,9 +1,11 @@
 defmodule PaymentServer.ExchangeRateServer do
   require Logger
-  alias PaymentServer.ExternalApis.AlphaVantage
+  alias PaymentServer.Behaviours
+  alias PaymentServer.Config
   use GenServer
 
   @exchange_rate_topic "exchange_rate"
+  @alpha_vantage_module Config.Modules.alpha_vantage()
 
   def server_name(from_currency, to_currency) do
     :"exchange_rate_server.#{from_currency}_#{to_currency}"
@@ -41,7 +43,7 @@ defmodule PaymentServer.ExchangeRateServer do
   end
 
   defp poll_exchange_rate(from_currency, to_currency) do
-    new_exchange_rate = case AlphaVantage.get_exchange_rate(from_currency, to_currency) do
+    new_exchange_rate = case Behaviours.AlphaVantage.get_exchange_rate(@alpha_vantage_module, from_currency, to_currency) do
       {:ok, exchange_rate} -> exchange_rate
       {:error, %ErrorMessage{} = error} ->
         Logger.error(error.message, ErrorMessage.to_jsonable_map(error))
@@ -60,7 +62,7 @@ defmodule PaymentServer.ExchangeRateServer do
   end
 
   def handle_call(:get_exchange_rate, _, %{exchange_rate: :error} = state) do
-    {:reply, {:error, ErrorMessage.internal_server_error("Failed to retrieve exchange rate")}, state}
+    {:reply, {:error, ErrorMessage.internal_server_error("Failed to retrieve exchange rate")}, {:internal, state}}
   end
 
   def handle_call(:get_exchange_rate, _, %{exchange_rate: exchange_rate} = state) do

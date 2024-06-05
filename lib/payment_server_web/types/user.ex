@@ -4,7 +4,7 @@ defmodule PaymentServerWeb.Types.User do
   import Absinthe.Resolution.Helpers, only: [dataloader: 2]
 
   object :user do
-    field :id, :id
+    field :id, :integer_id
     field :email, :string
 
     field :wallets, list_of(:wallet), resolve: dataloader(PaymentServer.Accounts, :wallets)
