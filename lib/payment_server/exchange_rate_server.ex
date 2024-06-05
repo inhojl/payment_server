@@ -44,7 +44,7 @@ defmodule PaymentServer.ExchangeRateServer do
     new_exchange_rate = case AlphaVantage.get_exchange_rate(from_currency, to_currency) do
       {:ok, exchange_rate} -> exchange_rate
       {:error, %ErrorMessage{} = error} ->
-        Logger.error(error.message, error)
+        Logger.error(error.message, ErrorMessage.to_jsonable_map(error))
         :error
     end
     Process.send_after(self(), :poll_exchange_rate, :timer.seconds(1))

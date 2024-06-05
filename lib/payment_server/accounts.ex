@@ -56,20 +56,20 @@ defmodule PaymentServer.Accounts do
   defdelegate send_money(sender_wallet, recipient_wallet, transaction_amount), to: SendMoney, as: :multi
 
   def calculate_total_worth(user_id, to_currency) do
-    {:ok, %{wallets: wallets}} = find_user(%{id: user_id, preload: :wallets})
-
-    total_worth = Enum.reduce(wallets, Decimal.new("0"), fn %{currency: from_currency, balance: balance}, total_worth ->
-      wallet_total = calculate_wallet_total(from_currency, to_currency, balance)
-      Decimal.add(total_worth, wallet_total)
-    end)
-
-    {:ok, total_worth}
+    with {:ok, %{wallets: wallets}} <- find_user(%{id: user_id, preload: :wallets}) do
+      Enum.reduce_while(wallets, {:ok, Decimal.new("0")}, fn %{currency: from_currency, balance: balance}, {:ok, total_worth} ->
+        case convert_wallet_total(from_currency, to_currency, balance) do
+          {:ok, wallet_total} -> {:cont, {:ok, Decimal.add(total_worth, wallet_total)}}
+          {:error, _} = error -> {:halt, error}
+        end
+      end)
+    end
   end
 
-  def calculate_wallet_total(from_currency, to_currency, balance) when from_currency === to_currency, do: balance
-  def calculate_wallet_total(from_currency, to_currency, balance) do
+  def convert_wallet_total(from_currency, to_currency, balance) when from_currency === to_currency, do: {:ok, balance}
+  def convert_wallet_total(from_currency, to_currency, balance) do
       case ExchangeRateServer.get_exchange_rate(from_currency, to_currency) do
-        {:ok, exchange_rate} -> Decimal.mult(balance, exchange_rate)
+        {:ok, exchange_rate} -> {:ok, Decimal.mult(balance, exchange_rate)}
         {:error, error} -> {:error, error}
       end
   end

@@ -1,13 +1,16 @@
 defmodule PaymentServer.Accounts.Wallet do
+  alias PaymentServer.Config
   alias PaymentServer.Accounts.User
   alias PaymentServer.Accounts.Wallet
   use Ecto.Schema
   import Ecto.Changeset
   import Ecto.Query
 
+  @currencies Config.currencies()
+
   schema "wallets" do
     field :balance, :decimal, default: Decimal.new("0.00")
-    field :currency, :string
+    field :currency, Ecto.Enum, values: @currencies
 
     belongs_to :user, User
     timestamps(type: :utc_datetime)

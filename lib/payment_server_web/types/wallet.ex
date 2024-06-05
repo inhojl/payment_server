@@ -5,13 +5,13 @@ defmodule PaymentServerWeb.Types.Wallet do
     field :id, :id
     field :user_id, :id
     field :currency, :string
-    field :balance, :string
+    field :balance, :decimal
   end
 
   object :total_worth do
     field :user_id, :id
     field :currency, :string
-    field :balance, :string
+    field :balance, :decimal
   end
 
 end

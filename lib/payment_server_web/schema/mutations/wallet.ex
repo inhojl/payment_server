@@ -1,4 +1,5 @@
 defmodule PaymentServerWeb.Schema.Mutations.Wallet do
+  alias PaymentServerWeb.Middlewares.CurrencyValidator
   alias PaymentServerWeb.Resolvers
   use Absinthe.Schema.Notation
 
@@ -7,6 +8,7 @@ defmodule PaymentServerWeb.Schema.Mutations.Wallet do
       arg :currency, non_null(:string)
       arg :user_id, non_null(:id)
 
+      middleware CurrencyValidator
       resolve &Resolvers.Wallet.create/2
     end
 
@@ -15,8 +17,9 @@ defmodule PaymentServerWeb.Schema.Mutations.Wallet do
       arg :recipient_currency, non_null(:string)
       arg :sender_id, non_null(:id)
       arg :sender_currency, non_null(:id)
-      arg :amount, non_null(:string)
+      arg :amount, non_null(:decimal)
 
+      middleware CurrencyValidator
       resolve &Resolvers.Wallet.send_money/2
     end
 

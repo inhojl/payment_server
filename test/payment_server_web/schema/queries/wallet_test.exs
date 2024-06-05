@@ -68,7 +68,7 @@ defmodule PaymentServerWeb.Schema.Queries.WalletTest do
       assert {:ok, %{data: data}} = Absinthe.run(@wallet_query, Schema,
       variables: %{
         "userId" => wallet1.user_id,
-        "currency" => wallet1.currency
+        "currency" => Atom.to_string(wallet1.currency)
       })
 
       assert data["wallet"]["id"] === to_string(wallet1.id)
@@ -91,12 +91,12 @@ defmodule PaymentServerWeb.Schema.Queries.WalletTest do
       assert {:ok, %{data: data}} = Absinthe.run(@wallets_query, Schema,
       variables: %{
         "userId" => id,
-        "currency" => wallet1.currency
+        "currency" => Atom.to_string(wallet1.currency)
       })
 
       wallet = Enum.at(data["wallets"], 0)
       assert wallet["id"] === to_string(wallet1.id)
-      assert wallet["currency"] === wallet1.currency
+      assert wallet["currency"] === Atom.to_string(wallet1.currency)
     end
 
     test "fetch first 2 wallets", %{user1: %{wallets: user1_wallets}} do

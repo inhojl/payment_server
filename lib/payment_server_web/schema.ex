@@ -2,6 +2,8 @@ defmodule PaymentServerWeb.Schema do
   alias PaymentServerWeb.Middlewares
   use Absinthe.Schema
 
+
+  import_types PaymentServerWeb.Types.Decimal
   import_types PaymentServerWeb.Types.User
   import_types PaymentServerWeb.Types.Wallet
   import_types PaymentServerWeb.Types.ExchangeRate
@@ -41,7 +43,7 @@ defmodule PaymentServerWeb.Schema do
     [Absinthe.Middleware.Dataloader] ++ Absinthe.Plugin.defaults()
   end
 
-  def middleware(middleware, field, object) do
+  def middleware(middleware, _, _) do
     middleware ++ [Middlewares.ErrorHandler]
   end
 

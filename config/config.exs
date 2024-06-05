@@ -8,7 +8,7 @@
 import Config
 
 config :payment_server,
-  currencies: ["USD", "KRW", "AUD"]
+  currencies: [:USD, :KRW, :AUD]
 
 config :payment_server,
   ecto_repos: [PaymentServer.Repo],

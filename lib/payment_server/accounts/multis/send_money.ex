@@ -48,6 +48,7 @@ defmodule PaymentServer.Accounts.Multis.SendMoney do
     |> Repo.transaction()
     |> case do
       {:ok, changes} -> broadcast_transactions_and_extract_sender_wallet(changes)
+      {:error, _, %ErrorMessage{} = error, _} -> {:error, error}
       {:error, failed_operation, failed_value, changes_so_far} -> handle_error(__MODULE__, __ENV__.function, failed_operation, failed_value, changes_so_far)
     end
   end
@@ -62,12 +63,17 @@ defmodule PaymentServer.Accounts.Multis.SendMoney do
 
   defp lock_wallets(multi) do
     multi
-    |> Multi.one(:find_sender_wallet, fn %{sender_wallet: sender_wallet} ->
-      Wallet.lock_by_user_id_and_currency(sender_wallet.user_id, sender_wallet.currency)
-    end)
-    |> Multi.one(:find_recipient_wallet, fn %{recipient_wallet: recipient_wallet} ->
-      Wallet.lock_by_user_id_and_currency(recipient_wallet.user_id, recipient_wallet.currency)
-    end)
+    |> Multi.run(:find_sender_wallet, fn _, %{sender_wallet: sender_wallet} -> lock_wallet(sender_wallet.user_id, sender_wallet.currency) end)
+    |> Multi.run(:find_recipient_wallet, fn _, %{recipient_wallet: recipient_wallet} -> lock_wallet(recipient_wallet.user_id, recipient_wallet.currency) end)
+  end
+
+  defp lock_wallet(user_id, currency) do
+    Wallet.lock_by_user_id_and_currency(user_id, currency)
+    |> Repo.one()
+    |> case do
+      nil -> {:error, ErrorMessage.not_found("Could not find user's wallet for user_id: #{user_id} and currency: #{currency}")}
+      wallet -> {:ok, wallet}
+    end
   end
 
   defp get_exchange_rate(multi) do
@@ -86,14 +92,14 @@ defmodule PaymentServer.Accounts.Multis.SendMoney do
   defp update_wallets(multi) do
     multi
     |> Multi.update(:update_sender_wallet, fn %{find_sender_wallet: sender_wallet, transaction_amount: transaction_amount} ->
-      updated_balance = Decimal.sub(sender_wallet.balance, transaction_amount)
-      Wallet.changeset(sender_wallet, %{balance: updated_balance})
-    end)
+        updated_balance = Decimal.sub(sender_wallet.balance, transaction_amount)
+        Wallet.changeset(sender_wallet, %{balance: updated_balance})
+      end)
     |> Multi.update(:update_recipient_wallet, fn %{find_recipient_wallet: recipient_wallet, get_exchange_rate: exchange_rate, transaction_amount: transaction_amount} ->
-      converted_transaction_amount = Decimal.mult(transaction_amount, exchange_rate)
-      updated_balance = Decimal.add(recipient_wallet.balance, converted_transaction_amount)
-      Wallet.changeset(recipient_wallet, %{balance: updated_balance})
-    end)
+        converted_transaction_amount = Decimal.mult(transaction_amount, exchange_rate)
+        updated_balance = Decimal.add(recipient_wallet.balance, converted_transaction_amount)
+        Wallet.changeset(recipient_wallet, %{balance: updated_balance})
+      end)
   end
 
   defp broadcast_transactions_and_extract_sender_wallet(%{
