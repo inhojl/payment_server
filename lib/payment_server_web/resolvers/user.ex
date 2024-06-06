@@ -10,6 +10,11 @@ defmodule PaymentServerWeb.Resolvers.User do
     Accounts.find_user(%{id: id})
   end
 
+  def find(_, _) do
+    {:error, ErrorMessage.bad_request("Specify arguments")}
+  end
+
+
   def all(params, _) do
     Accounts.list_users(params)
   end

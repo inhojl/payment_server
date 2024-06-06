@@ -45,14 +45,8 @@ defmodule PaymentServer.Accounts.Multis.SendMoney do
     |> lock_wallets()
     |> get_exchange_rate()
     |> update_wallets()
-    |> Repo.transaction()
-    |> case do
-      {:ok, changes} -> broadcast_transactions_and_extract_sender_wallet(changes)
-      {:error, _, %ErrorMessage{} = error, _} -> {:error, error}
-      {:error, failed_operation, failed_value, changes_so_far} -> handle_error(__MODULE__, __ENV__.function, failed_operation, failed_value, changes_so_far)
-    end
+    |> handle_multi_transaction()
   end
-
 
   defp init_multi_changes(multi, sender_wallet, recipient_wallet, transaction_amount) do
     multi
@@ -100,6 +94,16 @@ defmodule PaymentServer.Accounts.Multis.SendMoney do
         updated_balance = Decimal.add(recipient_wallet.balance, converted_transaction_amount)
         Wallet.changeset(recipient_wallet, %{balance: updated_balance})
       end)
+  end
+
+  defp handle_multi_transaction(multi) do
+    multi
+    |> Repo.transaction()
+    |> case do
+      {:ok, changes} -> broadcast_transactions_and_extract_sender_wallet(changes)
+      {:error, _, %ErrorMessage{} = error, _} -> {:error, error}
+      {:error, failed_operation, failed_value, changes_so_far} -> handle_error(__MODULE__, __ENV__.function, failed_operation, failed_value, changes_so_far)
+    end
   end
 
   defp broadcast_transactions_and_extract_sender_wallet(%{

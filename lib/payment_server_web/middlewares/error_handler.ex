@@ -1,4 +1,5 @@
 defmodule PaymentServerWeb.Middlewares.ErrorHandler do
+  alias Ecto.Changeset
   @behaviour Absinthe.Middleware
 
   require Logger
@@ -19,6 +20,13 @@ defmodule PaymentServerWeb.Middlewares.ErrorHandler do
       code: error.code,
       message: error.message
     }
+  end
+  defp transform_error(%Changeset{errors: errors}) do
+    errors
+    |> Enum.map(fn {field, {field_error_message, _}} -> "#{field}: #{field_error_message}" end)
+    |> Enum.join(", ")
+    |> tap(&Logger.debug/1)
+    |> then(&%{message: &1})
   end
 
   defp handle_internal_error(error) do

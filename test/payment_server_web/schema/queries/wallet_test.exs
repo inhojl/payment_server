@@ -1,8 +1,19 @@
 defmodule PaymentServerWeb.Schema.Queries.WalletTest do
   use PaymentServer.DataCase, async: true
 
+  import PaymentServer.AccountsFixtures, only: [exchange_rate_fixture: 0, users_fixture: 0]
   alias PaymentServer.Accounts
   alias PaymentServerWeb.Schema
+  alias PaymentServer.ExchangeRateServer
+
+
+  setup do
+    assert {:ok, _pid} = ExchangeRateServer.start_link(:KRW, :USD)
+    assert {:ok, _pid} = ExchangeRateServer.start_link(:USD, :USD)
+
+    users_fixture()
+    |> Map.put_new(:exchange_rate, exchange_rate_fixture())
+  end
 
   @wallet_query """
   query FindWallet($id: IntegerId, $userId: IntegerId, $currency: String) {
@@ -15,44 +26,6 @@ defmodule PaymentServerWeb.Schema.Queries.WalletTest do
   }
 
   """
-
-  @wallets_query """
-  query AllWallets($userId: IntegerId, $currency: String, $first: Int, $before: IntegerId, $after: IntegerId) {
-    wallets(userId: $userId, currency: $currency, first: $first, before: $before, after: $after) {
-      id
-      currency
-      balance
-      userId
-    }
-  }
-
-  """
-
-  setup do
-    assert {:ok, user1} = Accounts.create_user(%{
-      email: "user1@email.com",
-      wallets: [%{
-        currency: "USD",
-        balance: 1459.94
-      }, %{
-        currency: "KRW",
-        balance: 1123.12
-      }]
-    })
-
-    assert {:ok, user2} = Accounts.create_user(%{
-      email: "user2@email.com",
-      wallets: [%{
-        currency: "USD",
-        balance: 123.94
-      }, %{
-        currency: "KRW",
-        balance: 68.12
-      }]
-    })
-
-    %{user1: user1, user2: user2}
-  end
 
   describe "@wallet" do
     test "fetch wallet by id", %{user1: %{wallets: [wallet1 | _]}} do
@@ -74,6 +47,19 @@ defmodule PaymentServerWeb.Schema.Queries.WalletTest do
       assert data["wallet"]["id"] === wallet1.id
     end
   end
+
+
+  @wallets_query """
+  query AllWallets($userId: IntegerId, $currency: String, $first: Int, $before: IntegerId, $after: IntegerId) {
+    wallets(userId: $userId, currency: $currency, first: $first, before: $before, after: $after) {
+      id
+      currency
+      balance
+      userId
+    }
+  }
+
+  """
 
   describe "@wallets" do
     test "fetch wallets by userId", %{user1: user1} do
@@ -120,18 +106,37 @@ defmodule PaymentServerWeb.Schema.Queries.WalletTest do
       assert Enum.all?(data["wallets"], &(&1["id"] in wallet_ids))
     end
 
-    test "fetch wallet after id", %{user1: %{wallets: [_, %{id: id}]}, user2: %{wallets: user2_wallets}} do
+    test "fetch wallet after id", %{user2: %{wallets: [_, %{id: id}]}, user3: user3} do
       assert {:ok, %{data: data}} = Absinthe.run(@wallets_query, Schema,
       variables: %{
         "after" => id
       })
 
-      wallet_ids = Enum.map(user2_wallets, &(&1.id))
+      wallet_ids = Enum.map(user3.wallets, &(&1.id))
 
       assert Enum.all?(data["wallets"], &(&1["id"] in wallet_ids))
     end
   end
 
+  @total_worth_query """
+  query TotalWorth($userId: IntegerId!, $currency: String!) {
+    totalWorth(userId: $userId, currency: $currency)
+  }
+  """
+
+  describe "@total_worth_query" do
+    test "calculate expected total worth", %{user1: user1} do
+
+      assert {:ok, %{data: data}} = Absinthe.run(@total_worth_query, Schema, variables: %{"userId" => user1.id, "currency" => "USD"})
+
+      expected_total_worth = user1.id
+        |> Accounts.calculate_total_worth(:USD)
+        |> then(fn {:ok, total_worth} -> total_worth end)
+        |> Decimal.to_string()
+
+      assert data["totalWorth"] === expected_total_worth
+    end
+  end
 
 
 end

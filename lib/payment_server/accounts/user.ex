@@ -1,7 +1,8 @@
 defmodule PaymentServer.Accounts.User do
-  alias PaymentServer.Accounts.Wallet
   use Ecto.Schema
+
   import Ecto.Changeset
+  alias PaymentServer.Accounts.Wallet
 
   schema "users" do
     field :email, :string
@@ -15,6 +16,7 @@ defmodule PaymentServer.Accounts.User do
     user
     |> cast(attrs, [:email])
     |> validate_required([:email])
+    |> unique_constraint([:email])
     |> cast_assoc(:wallets)
   end
 end

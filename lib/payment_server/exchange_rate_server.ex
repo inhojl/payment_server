@@ -1,8 +1,9 @@
 defmodule PaymentServer.ExchangeRateServer do
+  use GenServer
+
   require Logger
   alias PaymentServer.Behaviours
   alias PaymentServer.Config
-  use GenServer
 
   @exchange_rate_topic "exchange_rate"
   @alpha_vantage_module Config.Modules.alpha_vantage()

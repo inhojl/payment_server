@@ -16,5 +16,11 @@ defmodule PaymentServerWeb.Types.IntegerId do
   defp parse_id(_), do: :error
 
   defp serialize_id(int) when is_integer(int), do: int
+  defp serialize_id(string) when is_binary(string) do
+    case Integer.parse(string) do
+      {int, ""} -> int
+      _ -> :error
+    end
+  end
   defp serialize_id(_), do: :error
 end

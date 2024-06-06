@@ -55,7 +55,7 @@ defmodule PaymentServer.Accounts do
 
   defdelegate send_money(sender_wallet, recipient_wallet, transaction_amount), to: SendMoney, as: :multi
 
-  def calculate_total_worth(user_id, to_currency) do
+  def calculate_total_worth(user_id, to_currency) when is_atom(to_currency) do
     with {:ok, %{wallets: wallets}} <- find_user(%{id: user_id, preload: :wallets}) do
       Enum.reduce_while(wallets, {:ok, Decimal.new("0")}, fn %{currency: from_currency, balance: balance}, {:ok, total_worth} ->
         case convert_wallet_total(from_currency, to_currency, balance) do

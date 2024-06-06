@@ -4,33 +4,44 @@ defmodule PaymentServer.AccountsFixtures do
   entities via the `PaymentServer.Accounts` context.
   """
 
-  @doc """
-  Generate a user.
-  """
-  def user_fixture(attrs \\ %{}) do
-    {:ok, user} =
-      attrs
-      |> Enum.into(%{
-        email: "some email"
-      })
-      |> PaymentServer.Accounts.create_user()
+  alias PaymentServer.Accounts
 
-    user
-  end
 
-  @doc """
-  Generate a wallet.
-  """
-  def wallet_fixture(attrs \\ %{}) do
-    {:ok, wallet} =
-      attrs
-      |> Enum.into(%{
-        balance: "120.5",
-        currency: "some currency"
-      })
-      |> PaymentServer.Accounts.create_wallet()
+  def users_fixture() do
+    {:ok, user1} = Accounts.create_user(%{
+      email: "user1@email.com",
+      wallets: [%{
+        currency: :USD,
+        balance: Decimal.new("100")
+      }, %{
+        currency: :KRW,
+        balance: Decimal.new("100")
+      }]
+    })
 
-    wallet
+    {:ok, user2} = Accounts.create_user(%{
+      email: "user2@email.com",
+      wallets: [%{
+        currency: :USD,
+        balance: Decimal.new("100")
+      }, %{
+        currency: :KRW,
+        balance: Decimal.new("100")
+      }]
+    })
+
+    {:ok, user3} = Accounts.create_user(%{
+      email: "user3@email.com",
+      wallets: [%{
+        currency: :USD,
+        balance: Decimal.new("100")
+      }, %{
+        currency: :KRW,
+        balance: Decimal.new("100")
+      }]
+    })
+
+    %{user1: user1, user2: user2, user3: user3}
   end
 
 

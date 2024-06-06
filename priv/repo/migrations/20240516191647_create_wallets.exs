@@ -11,6 +11,6 @@ defmodule PaymentServer.Repo.Migrations.CreateWalletsTable do
     end
 
     create index :wallets, [:user_id]
-    create unique_index :wallets, [:user_id, :currency]
+    create unique_index :wallets, [:currency, :user_id]
   end
 end

@@ -1,7 +1,8 @@
 defmodule PaymentServerWeb.Schema.Mutations.Wallet do
+  use Absinthe.Schema.Notation
+
   alias PaymentServerWeb.Middlewares.CurrencyValidator
   alias PaymentServerWeb.Resolvers
-  use Absinthe.Schema.Notation
 
   object :wallet_mutations do
     field :create_wallet, :wallet do

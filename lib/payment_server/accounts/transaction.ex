@@ -1,5 +1,6 @@
 defmodule PaymentServer.Accounts.Transaction do
   use Ecto.Schema
+
   import Ecto.Changeset
   alias PaymentServer.Accounts.TransactionType
 

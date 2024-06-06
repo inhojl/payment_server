@@ -1,9 +1,12 @@
 defmodule PaymentServerWeb.Schema.Queries.UserTest do
   use PaymentServer.DataCase, async: true
 
-  alias PaymentServer.Accounts
+  import PaymentServer.AccountsFixtures, only: [users_fixture: 0]
   alias PaymentServerWeb.Schema
 
+  setup do
+    users_fixture()
+  end
 
   @user_query """
   query FindUser($id: IntegerId, $email: String) {
@@ -13,43 +16,6 @@ defmodule PaymentServerWeb.Schema.Queries.UserTest do
     }
   }
   """
-
-  @all_users_query """
-  query AllUsers($id: IntegerId, $email: String, $before: IntegerId, $after: IntegerId, $first: Int) {
-    users(id: $id, email: $email, before: $before, after: $after, first: $first) {
-      id,
-      email
-    }
-  }
-  """
-
-  setup do
-    assert {:ok, user1} = Accounts.create_user(%{
-      email: "user1@email.com",
-      wallet: %{
-        currency: "USD",
-        balance: 528.87
-      }
-    })
-
-    assert {:ok, user2} = Accounts.create_user(%{
-      email: "user2@email.com",
-      wallet: %{
-        currency: "AUS",
-        balance: 234.81
-      }
-    })
-
-    assert {:ok, user3} = Accounts.create_user(%{
-      email: "user3@email.com",
-      wallet: %{
-        currency: "KRW",
-        balance: 5100.50
-      }
-    })
-
-    %{user1: user1, user2: user2, user3: user3}
-  end
 
   describe "@user" do
     test "fetch user by id", %{user1: user1} do
@@ -70,6 +36,16 @@ defmodule PaymentServerWeb.Schema.Queries.UserTest do
       assert data["user"]["email"] === user1.email
     end
   end
+
+
+  @all_users_query """
+  query AllUsers($id: IntegerId, $email: String, $before: IntegerId, $after: IntegerId, $first: Int) {
+    users(id: $id, email: $email, before: $before, after: $after, first: $first) {
+      id,
+      email
+    }
+  }
+  """
 
   describe "@users" do
 
