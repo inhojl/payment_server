@@ -72,7 +72,8 @@ defmodule PaymentServer.ExchangeRateServer do
     Enum.each(topics, &(Absinthe.Subscription.publish(
       PaymentServerWeb.Endpoint,
       currency_exchange_rate,
-      currency_exchange_rate: &1)))
+      currency_exchange_rate: &1
+    )))
   end
 
   def get_exchange_rate(from_currency, to_currency) do

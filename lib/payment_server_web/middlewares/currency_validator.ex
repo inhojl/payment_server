@@ -20,8 +20,7 @@ defmodule PaymentServerWeb.Middlewares.CurrencyValidator do
 
   defp error_message(invalid_args) do
     invalid_args
-    |> Enum.map(fn {key, currency_string} -> "#{key}: #{currency_string}" end)
-    |> Enum.join(", ")
+    |> Enum.map_join(", ", fn {key, currency_string} -> "#{key}: #{currency_string}" end)
     |> then(&("Invalid currency - #{&1}"))
   end
 

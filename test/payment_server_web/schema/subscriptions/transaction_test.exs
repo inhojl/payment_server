@@ -60,7 +60,9 @@ defmodule PaymentServerWeb.Schema.Subscriptions.TransactionTest do
         "amount" => to_string(transaction_amount)
       }
 
-      updated_sender_balance = Decimal.sub(sender_wallet.balance, transaction_amount) |> to_string
+      updated_sender_balance = sender_wallet.balance
+        |> Decimal.sub(transaction_amount)
+        |> to_string
       assert_reply ref, :ok, reply
       assert %{
         data: %{"sendMoney" => %{
