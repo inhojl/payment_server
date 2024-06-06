@@ -11,8 +11,8 @@ defmodule PaymentServerWeb.Schema.Queries.WalletTest do
     assert {:ok, _pid} = ExchangeRateServer.start_link(:KRW, :USD)
     assert {:ok, _pid} = ExchangeRateServer.start_link(:USD, :USD)
 
-    users_fixture()
-    |> Map.put_new(:exchange_rate, exchange_rate_fixture())
+    config = users_fixture()
+    Map.put_new(config, :exchange_rate, exchange_rate_fixture())
   end
 
   @wallet_query """

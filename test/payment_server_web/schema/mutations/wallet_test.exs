@@ -5,8 +5,8 @@ defmodule PaymentServerWeb.Schema.Mutations.WalletTest do
   alias PaymentServerWeb.Schema
 
   setup do
-    users_fixture()
-    |> Map.put_new(:exchange_rate, exchange_rate_fixture())
+    config = users_fixture()
+    Map.put_new(config, :exchange_rate, exchange_rate_fixture())
   end
 
   @create_wallet """
