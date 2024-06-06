@@ -5,9 +5,7 @@ defmodule PaymentServerWeb.Middlewares.ErrorHandler do
   require Logger
 
   def call(%{errors: errors} = resolution, _config) do
-    transformed_errors =
-      errors
-      |> Enum.map(&transform_error/1)
+    transformed_errors = Enum.map(errors, &transform_error/1)
 
     %{resolution | errors: transformed_errors}
   end
@@ -23,8 +21,7 @@ defmodule PaymentServerWeb.Middlewares.ErrorHandler do
   end
   defp transform_error(%Changeset{errors: errors}) do
     errors
-    |> Enum.map(fn {field, {field_error_message, _}} -> "#{field}: #{field_error_message}" end)
-    |> Enum.join(", ")
+    |> Enum.map_join(", ", fn {field, {field_error_message, _}} -> "#{field}: #{field_error_message}" end)
     |> tap(&Logger.debug/1)
     |> then(&%{message: &1})
   end

@@ -8,8 +8,20 @@ defmodule PaymentServerWeb.Schema.Subscriptions.TransactionTest do
   end
 
   @send_money """
-  mutation SendMoney($recipientId: IntegerId!, $recipientCurrency: String!, $senderId: IntegerId!, $senderCurrency: String!, $amount: Decimal!) {
-    sendMoney(recipientId: $recipientId, recipientCurrency: $recipientCurrency, senderId: $senderId, senderCurrency: $senderCurrency, amount: $amount) {
+  mutation SendMoney(
+    $recipientId: IntegerId!,
+    $recipientCurrency: String!,
+    $senderId: IntegerId!,
+    $senderCurrency: String!,
+    $amount: Decimal!
+  ) {
+    sendMoney(
+      recipientId: $recipientId,
+      recipientCurrency: $recipientCurrency,
+      senderId: $senderId,
+      senderCurrency: $senderCurrency,
+      amount: $amount
+    ) {
       id
       userId
       currency

@@ -15,6 +15,4 @@ defmodule PaymentServer.ExchangeRateServerTest do
     end
   end
 
-
-
 end

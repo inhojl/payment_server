@@ -92,7 +92,10 @@ defmodule PaymentServer.AccountsTest do
       transaction_amount = Decimal.new("100")
       {:ok, updated_sender_wallet} = Accounts.send_money(sender_wallet, recipient_wallet, transaction_amount)
 
-      {:ok, updated_recipient_wallet} = Accounts.find_wallet(%{user_id: user2.id, currency: recipient_wallet.currency})
+      {:ok, updated_recipient_wallet} = Accounts.find_wallet(%{
+          user_id: user2.id,
+          currency: recipient_wallet.currency
+        })
 
       assert updated_sender_wallet.balance === Decimal.sub(sender_wallet.balance, transaction_amount)
       assert updated_recipient_wallet.balance === Decimal.add(recipient_wallet.balance, transaction_amount)
@@ -106,7 +109,10 @@ defmodule PaymentServer.AccountsTest do
       transaction_amount = Decimal.new("100")
       {:ok, updated_sender_wallet} = Accounts.send_money(sender_wallet, recipient_wallet, transaction_amount)
 
-      {:ok, updated_recipient_wallet} = Accounts.find_wallet(%{user_id: user2.id, currency: recipient_wallet.currency})
+      {:ok, updated_recipient_wallet} = Accounts.find_wallet(%{
+          user_id: user2.id,
+          currency: recipient_wallet.currency
+        })
 
       recipient_transaction_amount = Decimal.mult(transaction_amount, exchange_rate)
       assert updated_sender_wallet.balance === Decimal.sub(sender_wallet.balance, transaction_amount)

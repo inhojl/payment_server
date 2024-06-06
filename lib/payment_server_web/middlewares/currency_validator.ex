@@ -11,7 +11,10 @@ defmodule PaymentServerWeb.Middlewares.CurrencyValidator do
     |> filter_invalid_args()
     |> case do
       [] -> resolution
-      invalid_args -> Absinthe.Resolution.put_result(resolution, {:error, ErrorMessage.bad_request(error_message(invalid_args), invalid_args)})
+      invalid_args -> Absinthe.Resolution.put_result(
+        resolution,
+        {:error, ErrorMessage.bad_request(error_message(invalid_args), invalid_args)}
+      )
     end
   end
 
@@ -27,7 +30,9 @@ defmodule PaymentServerWeb.Middlewares.CurrencyValidator do
   end
 
   defp filter_invalid_args(args) do
-    Enum.filter(args, fn {_key, currency_string} -> not Map.has_key?(@currencies_string_to_atom_map, currency_string) end)
+    Enum.filter(args, fn {_key, currency_string} ->
+      not Map.has_key?(@currencies_string_to_atom_map, currency_string)
+    end)
   end
 
 end

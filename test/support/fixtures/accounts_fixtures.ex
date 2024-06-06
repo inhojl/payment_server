@@ -7,7 +7,7 @@ defmodule PaymentServer.AccountsFixtures do
   alias PaymentServer.Accounts
 
 
-  def users_fixture() do
+  def users_fixture do
     {:ok, user1} = Accounts.create_user(%{
       email: "user1@email.com",
       wallets: [%{
@@ -45,7 +45,7 @@ defmodule PaymentServer.AccountsFixtures do
   end
 
 
-  def exchange_rate_fixture() do
+  def exchange_rate_fixture do
     Decimal.new("2")
   end
 

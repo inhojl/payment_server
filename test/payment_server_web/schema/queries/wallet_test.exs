@@ -127,7 +127,10 @@ defmodule PaymentServerWeb.Schema.Queries.WalletTest do
   describe "@total_worth_query" do
     test "calculate expected total worth", %{user1: user1} do
 
-      assert {:ok, %{data: data}} = Absinthe.run(@total_worth_query, Schema, variables: %{"userId" => user1.id, "currency" => "USD"})
+      assert {:ok, %{data: data}} = Absinthe.run(@total_worth_query, Schema, variables: %{
+        "userId" => user1.id,
+        "currency" => "USD"
+      })
 
       expected_total_worth = user1.id
         |> Accounts.calculate_total_worth(:USD)

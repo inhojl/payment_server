@@ -16,5 +16,4 @@ defmodule PaymentServer.Config do
     end
   end
 
-
 end

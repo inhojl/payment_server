@@ -43,7 +43,7 @@ defp init_exchange_rate_servers(:test), do: []
 defp init_exchange_rate_servers(_) do
   for from_currency <- Config.currencies(),
       to_currency <- Config.currencies(),
-      from_currency != to_currency do
+      from_currency !== to_currency do
     ExchangeRateServer.child_spec(from_currency, to_currency)
   end
 end

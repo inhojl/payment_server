@@ -23,7 +23,12 @@ defmodule PaymentServerWeb.Schema.Subscriptions.ExchangeRateTest do
   """
 
   describe "@@exchange_rate_subscription" do
-    test "polling all exchange rates", %{socket: socket, from_currency: from_currency, to_currency: to_currency, exchange_rate: exchange_rate} do
+    test "polling all exchange rates", %{
+      socket: socket,
+      from_currency: from_currency,
+      to_currency: to_currency,
+      exchange_rate: exchange_rate
+    } do
 
       ref = push_doc socket, @exchange_rate_subscription
       assert_reply ref, :ok, %{subscriptionId: subscription_id}
@@ -43,7 +48,12 @@ defmodule PaymentServerWeb.Schema.Subscriptions.ExchangeRateTest do
         }} = data
     end
 
-    test "polling specific exchange rate", %{socket: socket, from_currency: from_currency, to_currency: to_currency, exchange_rate: exchange_rate} do
+    test "polling specific exchange rate", %{
+      socket: socket,
+      from_currency: from_currency,
+      to_currency: to_currency,
+      exchange_rate: exchange_rate
+    } do
 
       ref = push_doc socket, @exchange_rate_subscription, variables: %{"toCurrency" => to_currency}
       assert_reply ref, :ok, %{subscriptionId: subscription_id}

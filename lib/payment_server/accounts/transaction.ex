@@ -14,7 +14,15 @@ defmodule PaymentServer.Accounts.Transaction do
     field :updated_at, :utc_datetime, virtual: true
   end
 
-  @required_params [:user_id, :wallet_id, :currency, :transaction_amount, :transaction_type, :inserted_at, :updated_at]
+  @required_params [
+    :user_id,
+    :wallet_id,
+    :currency,
+    :transaction_amount,
+    :transaction_type,
+    :inserted_at,
+    :updated_at
+  ]
 
   def changeset(transaction, attrs) do
     transaction
