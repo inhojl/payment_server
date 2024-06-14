@@ -15,7 +15,7 @@ defmodule PaymentServerWeb.Schema.Queries.WalletTest do
   end
 
   @wallet_query """
-  query FindWallet($id: IntegerId, $userId: IntegerId, $currency: String) {
+  query FindWallet($id: ID, $userId: ID, $currency: String) {
     wallet(id: $id, userId: $userId, currency: $currency) {
       id
       currency
@@ -35,7 +35,7 @@ defmodule PaymentServerWeb.Schema.Queries.WalletTest do
                  }
                )
 
-      assert data["wallet"]["id"] === wallet1.id
+      assert data["wallet"]["id"] === to_string(wallet1.id)
     end
 
     test "fetch wallet by user id and currency", %{user1: %{wallets: [wallet1 | _]}} do
@@ -47,12 +47,12 @@ defmodule PaymentServerWeb.Schema.Queries.WalletTest do
                  }
                )
 
-      assert data["wallet"]["id"] === wallet1.id
+      assert data["wallet"]["id"] === to_string(wallet1.id)
     end
   end
 
   @wallets_query """
-  query AllWallets($userId: IntegerId, $currency: String, $first: Int, $before: IntegerId, $after: IntegerId) {
+  query AllWallets($userId: ID, $currency: String, $first: Int, $before: ID, $after: ID) {
     wallets(userId: $userId, currency: $currency, first: $first, before: $before, after: $after) {
       id
       currency
@@ -72,7 +72,7 @@ defmodule PaymentServerWeb.Schema.Queries.WalletTest do
                  }
                )
 
-      wallet_ids = Enum.map(user1.wallets, & &1.id)
+      wallet_ids = Enum.map(user1.wallets, &to_string(&1.id))
 
       assert Enum.all?(data["wallets"], &(&1["id"] in wallet_ids))
     end
@@ -87,7 +87,7 @@ defmodule PaymentServerWeb.Schema.Queries.WalletTest do
                )
 
       wallet = Enum.at(data["wallets"], 0)
-      assert wallet["id"] === wallet1.id
+      assert wallet["id"] === to_string(wallet1.id)
       assert wallet["currency"] === Atom.to_string(wallet1.currency)
     end
 
@@ -99,7 +99,7 @@ defmodule PaymentServerWeb.Schema.Queries.WalletTest do
                  }
                )
 
-      wallet_ids = Enum.map(user1_wallets, & &1.id)
+      wallet_ids = Enum.map(user1_wallets, &to_string(&1.id))
 
       assert Enum.all?(data["wallets"], &(&1["id"] in wallet_ids))
     end
@@ -115,7 +115,7 @@ defmodule PaymentServerWeb.Schema.Queries.WalletTest do
                  }
                )
 
-      wallet_ids = Enum.map(user1_wallets, & &1.id)
+      wallet_ids = Enum.map(user1_wallets, &to_string(&1.id))
 
       assert Enum.all?(data["wallets"], &(&1["id"] in wallet_ids))
     end
@@ -128,14 +128,14 @@ defmodule PaymentServerWeb.Schema.Queries.WalletTest do
                  }
                )
 
-      wallet_ids = Enum.map(user3.wallets, & &1.id)
+      wallet_ids = Enum.map(user3.wallets, &to_string(&1.id))
 
       assert Enum.all?(data["wallets"], &(&1["id"] in wallet_ids))
     end
   end
 
   @total_worth_query """
-  query TotalWorth($userId: IntegerId!, $currency: String!) {
+  query TotalWorth($userId: ID!, $currency: String!) {
     totalWorth(userId: $userId, currency: $currency)
   }
   """

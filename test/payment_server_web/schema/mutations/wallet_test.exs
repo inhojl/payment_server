@@ -10,7 +10,7 @@ defmodule PaymentServerWeb.Schema.Mutations.WalletTest do
   end
 
   @create_wallet """
-  mutation CreateWallet($userId: IntegerId!, $currency: String!) {
+  mutation CreateWallet($userId: ID!, $currency: String!) {
     createWallet(userId: $userId, currency: $currency) {
       id
       userId
@@ -30,16 +30,16 @@ defmodule PaymentServerWeb.Schema.Mutations.WalletTest do
                  }
                )
 
-      assert data["createWallet"]["userId"] === user.id
+      assert data["createWallet"]["userId"] === to_string(user.id)
       assert data["createWallet"]["currency"] === "AUD"
     end
   end
 
   @send_money """
   mutation SendMoney(
-    $recipientId: IntegerId!,
+    $recipientId: ID!,
     $recipientCurrency: String!,
-    $senderId: IntegerId!,
+    $senderId: ID!,
     $senderCurrency: String!,
     $amount: Decimal!
   ) {

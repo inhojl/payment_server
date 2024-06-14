@@ -9,7 +9,7 @@ defmodule PaymentServerWeb.Schema.Queries.UserTest do
   end
 
   @user_query """
-  query FindUser($id: IntegerId, $email: String) {
+  query FindUser($id: ID, $email: String) {
     user(id: $id, email: $email) {
       id,
       email
@@ -26,7 +26,7 @@ defmodule PaymentServerWeb.Schema.Queries.UserTest do
                  }
                )
 
-      assert data["user"]["id"] === user1.id
+      assert data["user"]["id"] === to_string(user1.id)
     end
 
     test "fetch user by email", %{user1: user1} do
@@ -42,7 +42,7 @@ defmodule PaymentServerWeb.Schema.Queries.UserTest do
   end
 
   @all_users_query """
-  query AllUsers($id: IntegerId, $email: String, $before: IntegerId, $after: IntegerId, $first: Int) {
+  query AllUsers($id: ID, $email: String, $before: ID, $after: ID, $first: Int) {
     users(id: $id, email: $email, before: $before, after: $after, first: $first) {
       id,
       email
@@ -70,7 +70,7 @@ defmodule PaymentServerWeb.Schema.Queries.UserTest do
                  }
                )
 
-      assert List.first(data["users"])["id"] === user1.id
+      assert List.first(data["users"])["id"] === to_string(user1.id)
     end
 
     test "fetch users before id", %{user1: user1, user2: user2} do

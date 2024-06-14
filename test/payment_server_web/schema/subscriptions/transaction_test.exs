@@ -9,9 +9,9 @@ defmodule PaymentServerWeb.Schema.Subscriptions.TransactionTest do
 
   @send_money """
   mutation SendMoney(
-    $recipientId: IntegerId!,
+    $recipientId: ID!,
     $recipientCurrency: String!,
-    $senderId: IntegerId!,
+    $senderId: ID!,
     $senderCurrency: String!,
     $amount: Decimal!
   ) {
@@ -31,7 +31,7 @@ defmodule PaymentServerWeb.Schema.Subscriptions.TransactionTest do
   """
 
   @transaction_subscription """
-  subscription Transaction($userId: IntegerId!) {
+  subscription Transaction($userId: ID!) {
     transaction(userId: $userId) {
       walletId
       userId

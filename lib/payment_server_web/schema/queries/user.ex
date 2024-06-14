@@ -5,17 +5,17 @@ defmodule PaymentServerWeb.Schema.Queries.User do
 
   object :user_queries do
     field :user, :user do
-      arg :id, :integer_id
+      arg :id, :id
       arg :email, :string
 
       resolve &Resolvers.User.find/2
     end
 
     field :users, list_of(:user) do
-      arg :id, :integer_id
+      arg :id, :id
       arg :email, :string
-      arg :before, :integer_id
-      arg :after, :integer_id
+      arg :before, :id
+      arg :after, :id
       arg :first, :integer
 
       resolve &Resolvers.User.all/2
