@@ -7,7 +7,10 @@
     arg: 2,
     # Absinthe-specific functions
     resolve: 1,
-    middleware: 1
+    middleware: 1,
+    config: 1,
+    import_types: 1,
+    import_fields: 1
   ],
   export: [
     locals_without_parens: [
@@ -15,7 +18,10 @@
       arg: 2,
       # Absinthe-specific functions
       resolve: 1,
-      middleware: 1
+      middleware: 1,
+      config: 1,
+      import_types: 1,
+      import_fields: 1
     ]
   ]
 ]

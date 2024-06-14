@@ -3,12 +3,12 @@ defmodule PaymentServerWeb.Schema.Subscriptions.ExchangeRate do
 
   object :exchange_rate_subscriptions do
     field :currency_exchange_rate, :currency_exchange_rate do
-      arg(:to_currency, :string)
+      arg :to_currency, :string
 
-      config(fn
+      config fn
         %{to_currency: to_currency} -> {:ok, topic: "exchange_rate:#{to_currency}"}
         _ -> {:ok, topic: "exchange_rate"}
-      end)
+      end
     end
   end
 end
