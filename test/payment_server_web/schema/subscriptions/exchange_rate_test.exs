@@ -2,12 +2,14 @@ defmodule PaymentServerWeb.Schema.Subscriptions.ExchangeRateTest do
   use PaymentServerWeb.SubscriptionCase
 
   import PaymentServer.AccountsFixtures, only: [exchange_rate_fixture: 0]
-  alias PaymentServer.ExchangeRateServer
+  alias PaymentServer.ExchangeRateAgent
+  alias PaymentServer.ExchangeRatePollTask
 
   setup do
     from_currency = "USD"
     to_currency = "KRW"
-    {:ok, _pid} = ExchangeRateServer.start_link(from_currency, to_currency)
+    {:ok, _pid} = ExchangeRateAgent.start_link(from_currency, to_currency)
+    {:ok, _pid} = ExchangeRatePollTask.start_link(from_currency, to_currency)
 
     %{
       from_currency: from_currency,

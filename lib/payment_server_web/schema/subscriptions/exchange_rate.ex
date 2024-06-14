@@ -6,8 +6,11 @@ defmodule PaymentServerWeb.Schema.Subscriptions.ExchangeRate do
       arg :to_currency, :string
 
       config fn
-        %{to_currency: to_currency} -> {:ok, topic: "exchange_rate:#{to_currency}"}
-        _ -> {:ok, topic: "exchange_rate"}
+        %{to_currency: to_currency}, _ ->
+          {:ok, topic: "exchange_rate:#{to_currency}"}
+
+        _, _ ->
+          {:ok, topic: "exchange_rate"}
       end
     end
   end

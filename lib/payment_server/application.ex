@@ -5,7 +5,8 @@ defmodule PaymentServer.Application do
 
   use Application
 
-  alias PaymentServer.ExchangeRateServer
+  alias PaymentServer.ExchangeRateAgent
+  alias PaymentServer.ExchangeRatePollTask
   alias PaymentServer.Config
 
   @impl true
@@ -23,7 +24,7 @@ defmodule PaymentServer.Application do
         # Start to serve requests, typically the last entry
         PaymentServerWeb.Endpoint,
         {Absinthe.Subscription, PaymentServerWeb.Endpoint}
-      ] ++ init_exchange_rate_servers(Mix.env())
+      ] ++ init_exchange_rate_agents_and_tasks(Mix.env())
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
@@ -39,13 +40,17 @@ defmodule PaymentServer.Application do
     :ok
   end
 
-  defp init_exchange_rate_servers(:test), do: []
+  defp init_exchange_rate_agents_and_tasks(:test), do: []
 
-  defp init_exchange_rate_servers(_) do
+  defp init_exchange_rate_agents_and_tasks(_) do
     for from_currency <- Config.currencies(),
         to_currency <- Config.currencies(),
-        from_currency !== to_currency do
-      ExchangeRateServer.child_spec(from_currency, to_currency)
+        from_currency !== to_currency,
+        specs <- [
+          ExchangeRateAgent.child_spec(from_currency, to_currency),
+          ExchangeRatePollTask.child_spec(from_currency, to_currency)
+        ] do
+      specs
     end
   end
 end

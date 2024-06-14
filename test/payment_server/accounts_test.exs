@@ -4,12 +4,17 @@ defmodule PaymentServer.AccountsTest do
 
   import PaymentServer.AccountsFixtures, only: [exchange_rate_fixture: 0, users_fixture: 0]
   alias PaymentServer.Accounts
-  alias PaymentServer.ExchangeRateServer
+  alias PaymentServer.ExchangeRateAgent
+  alias PaymentServer.ExchangeRatePollTask
 
   setup do
-    {:ok, _pid} = ExchangeRateServer.start_link(:USD, :AUD)
-    {:ok, _pid} = ExchangeRateServer.start_link(:USD, :KRW)
-    {:ok, _pid} = ExchangeRateServer.start_link(:KRW, :AUD)
+    {:ok, _pid} = ExchangeRateAgent.start_link(:USD, :AUD)
+    {:ok, _pid} = ExchangeRateAgent.start_link(:USD, :KRW)
+    {:ok, _pid} = ExchangeRateAgent.start_link(:KRW, :AUD)
+
+    {:ok, _pid} = ExchangeRatePollTask.start_link(:USD, :AUD)
+    {:ok, _pid} = ExchangeRatePollTask.start_link(:USD, :KRW)
+    {:ok, _pid} = ExchangeRatePollTask.start_link(:KRW, :AUD)
 
     config = users_fixture()
     Map.put_new(config, :exchange_rate, exchange_rate_fixture())

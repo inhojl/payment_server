@@ -4,7 +4,7 @@ defmodule PaymentServer.MoneyTransfer do
   alias PaymentServer.Repo
   alias PaymentServer.Accounts
   alias PaymentServer.Accounts.Wallet
-  alias PaymentServer.ExchangeRateServer
+  alias PaymentServer.ExchangeRateAgent
 
   def send_money(
         %Wallet{} = sender_wallet,
@@ -100,7 +100,7 @@ defmodule PaymentServer.MoneyTransfer do
     if sender_wallet.currency === recipient_wallet.currency do
       {:ok, Decimal.new("1")}
     else
-      case ExchangeRateServer.get_exchange_rate(
+      case ExchangeRateAgent.get_exchange_rate(
              sender_wallet.currency,
              recipient_wallet.currency
            ) do

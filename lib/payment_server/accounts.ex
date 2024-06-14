@@ -5,7 +5,7 @@ defmodule PaymentServer.Accounts do
 
   import Ecto.Query, warn: false
   alias EctoShorts.Actions
-  alias PaymentServer.ExchangeRateServer
+  alias PaymentServer.ExchangeRateAgent
   alias PaymentServer.Repo
   alias PaymentServer.Accounts.User
   alias PaymentServer.Accounts.Wallet
@@ -71,7 +71,7 @@ defmodule PaymentServer.Accounts do
       do: {:ok, balance}
 
   def convert_wallet_total(from_currency, to_currency, balance) do
-    case ExchangeRateServer.get_exchange_rate(from_currency, to_currency) do
+    case ExchangeRateAgent.get_exchange_rate(from_currency, to_currency) do
       {:ok, exchange_rate} -> {:ok, Decimal.mult(balance, exchange_rate)}
       {:error, error} -> {:error, error}
     end

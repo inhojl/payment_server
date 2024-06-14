@@ -4,11 +4,15 @@ defmodule PaymentServerWeb.Schema.Queries.WalletTest do
   import PaymentServer.AccountsFixtures, only: [exchange_rate_fixture: 0, users_fixture: 0]
   alias PaymentServer.Accounts
   alias PaymentServerWeb.Schema
-  alias PaymentServer.ExchangeRateServer
+  alias PaymentServer.ExchangeRateAgent
+  alias PaymentServer.ExchangeRatePollTask
 
   setup do
-    assert {:ok, _pid} = ExchangeRateServer.start_link(:KRW, :USD)
-    assert {:ok, _pid} = ExchangeRateServer.start_link(:USD, :USD)
+    assert {:ok, _pid} = ExchangeRateAgent.start_link(:KRW, :USD)
+    assert {:ok, _pid} = ExchangeRateAgent.start_link(:USD, :USD)
+
+    assert {:ok, _pid} = ExchangeRatePollTask.start_link(:KRW, :USD)
+    assert {:ok, _pid} = ExchangeRatePollTask.start_link(:USD, :USD)
 
     config = users_fixture()
     Map.put_new(config, :exchange_rate, exchange_rate_fixture())
