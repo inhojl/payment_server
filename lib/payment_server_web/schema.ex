@@ -2,7 +2,7 @@ defmodule PaymentServerWeb.Schema do
   alias PaymentServerWeb.Middlewares
   use Absinthe.Schema
 
-  import_types(PaymentServerWeb.Types.Decimal)
+  import_types(Absinthe.Type.Custom)
   import_types(PaymentServerWeb.Types.User)
   import_types(PaymentServerWeb.Types.Wallet)
   import_types(PaymentServerWeb.Types.ExchangeRate)
