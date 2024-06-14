@@ -10,7 +10,6 @@ defmodule PaymentServer.Accounts do
   alias PaymentServer.Accounts.User
   alias PaymentServer.Accounts.Wallet
   alias PaymentServer.Accounts.Transaction
-  alias PaymentServer.Accounts.Multis.SendMoney
 
   def list_users(params) do
     {:ok, Actions.all(User, params)}
@@ -52,10 +51,6 @@ defmodule PaymentServer.Accounts do
     Wallet.changeset(wallet, attrs)
   end
 
-  defdelegate send_money(sender_wallet, recipient_wallet, transaction_amount),
-    to: SendMoney,
-    as: :multi
-
   def calculate_total_worth(user_id, to_currency) when is_atom(to_currency) do
     with {:ok, %{wallets: wallets}} <- find_user(%{id: user_id, preload: :wallets}) do
       Enum.reduce_while(wallets, {:ok, Decimal.new("0")}, fn %{
@@ -96,5 +91,21 @@ defmodule PaymentServer.Accounts do
     }
 
     {:ok, recipient_transaction}
+  end
+
+  def lock_wallet(%{user_id: user_id, currency: currency}) do
+    user_id
+    |> Wallet.lock_by_user_id_and_currency(currency)
+    |> Repo.one()
+    |> case do
+      nil ->
+        {:error,
+         ErrorMessage.not_found(
+           "Could not find user's wallet for user_id: #{user_id} and currency: #{currency}"
+         )}
+
+      wallet ->
+        {:ok, wallet}
+    end
   end
 end

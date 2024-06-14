@@ -1,4 +1,5 @@
 defmodule PaymentServer.AccountsTest do
+  alias PaymentServer.MoneyTransfer
   use PaymentServer.DataCase, async: true
 
   import PaymentServer.AccountsFixtures, only: [exchange_rate_fixture: 0, users_fixture: 0]
@@ -92,7 +93,7 @@ defmodule PaymentServer.AccountsTest do
       transaction_amount = Decimal.new("100")
 
       {:ok, updated_sender_wallet} =
-        Accounts.send_money(sender_wallet, recipient_wallet, transaction_amount)
+        MoneyTransfer.send_money(sender_wallet, recipient_wallet, transaction_amount)
 
       {:ok, updated_recipient_wallet} =
         Accounts.find_wallet(%{
@@ -119,7 +120,7 @@ defmodule PaymentServer.AccountsTest do
       transaction_amount = Decimal.new("100")
 
       {:ok, updated_sender_wallet} =
-        Accounts.send_money(sender_wallet, recipient_wallet, transaction_amount)
+        MoneyTransfer.send_money(sender_wallet, recipient_wallet, transaction_amount)
 
       {:ok, updated_recipient_wallet} =
         Accounts.find_wallet(%{

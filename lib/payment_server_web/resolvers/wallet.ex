@@ -1,4 +1,5 @@
 defmodule PaymentServerWeb.Resolvers.Wallet do
+  alias PaymentServer.MoneyTransfer
   alias PaymentServer.Accounts.Wallet
   alias PaymentServer.Accounts
 
@@ -40,7 +41,7 @@ defmodule PaymentServerWeb.Resolvers.Wallet do
       currency: String.to_atom(recipient_currency)
     }
 
-    Accounts.send_money(sender_wallet, recipient_wallet, amount)
+    MoneyTransfer.send_money(sender_wallet, recipient_wallet, amount)
   end
 
   def calculate_total_worth(%{user_id: user_id, currency: currency}, _) do
