@@ -9,5 +9,4 @@ defmodule PaymentServerWeb.Types.User do
 
     field :wallets, list_of(:wallet), resolve: dataloader(PaymentServer.Accounts, :wallets)
   end
-
 end

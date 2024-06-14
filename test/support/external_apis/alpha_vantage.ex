@@ -6,5 +6,4 @@ defmodule PaymentServer.Support.AlphaVantage do
   def get_exchange_rate(_from_currency, _to_currency) do
     {:ok, exchange_rate_fixture()}
   end
-
 end

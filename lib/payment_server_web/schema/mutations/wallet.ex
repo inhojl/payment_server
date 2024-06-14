@@ -23,7 +23,5 @@ defmodule PaymentServerWeb.Schema.Mutations.Wallet do
       middleware CurrencyValidator
       resolve &Resolvers.Wallet.send_money/2
     end
-
   end
-
 end

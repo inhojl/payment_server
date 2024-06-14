@@ -1,5 +1,4 @@
 defmodule PaymentServerWeb.Resolvers.Wallet do
-
   alias PaymentServer.Accounts.Wallet
   alias PaymentServer.Accounts
 
@@ -23,16 +22,23 @@ defmodule PaymentServerWeb.Resolvers.Wallet do
     Accounts.create_wallet(params)
   end
 
-  def send_money(%{
-    recipient_id: recipient_id,
-    recipient_currency: recipient_currency,
-    sender_id: sender_id,
-    sender_currency: sender_currency,
-    amount: amount}, _) do
-
+  def send_money(
+        %{
+          recipient_id: recipient_id,
+          recipient_currency: recipient_currency,
+          sender_id: sender_id,
+          sender_currency: sender_currency,
+          amount: amount
+        },
+        _
+      ) do
     amount = Decimal.new(amount)
     sender_wallet = %Wallet{user_id: sender_id, currency: String.to_atom(sender_currency)}
-    recipient_wallet = %Wallet{user_id: recipient_id, currency: String.to_atom(recipient_currency)}
+
+    recipient_wallet = %Wallet{
+      user_id: recipient_id,
+      currency: String.to_atom(recipient_currency)
+    }
 
     Accounts.send_money(sender_wallet, recipient_wallet, amount)
   end
@@ -40,5 +46,4 @@ defmodule PaymentServerWeb.Resolvers.Wallet do
   def calculate_total_worth(%{user_id: user_id, currency: currency}, _) do
     Accounts.calculate_total_worth(user_id, String.to_atom(currency))
   end
-
 end

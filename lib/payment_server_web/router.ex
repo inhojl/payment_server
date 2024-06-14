@@ -8,15 +8,14 @@ defmodule PaymentServerWeb.Router do
   scope "/" do
     pipe_through :api
 
-    forward "/graphql", Absinthe.Plug,
-      schema: PaymentServerWeb.Schema
-    if Mix.env == :dev do
-      forward "/graphiql", Absinthe.Plug.GraphiQL,
-      schema: PaymentServerWeb.Schema,
-      socket: PaymentServerWeb.UserSocket,
-      interface: :playground
-    end
+    forward "/graphql", Absinthe.Plug, schema: PaymentServerWeb.Schema
 
+    if Mix.env() == :dev do
+      forward "/graphiql", Absinthe.Plug.GraphiQL,
+        schema: PaymentServerWeb.Schema,
+        socket: PaymentServerWeb.UserSocket,
+        interface: :playground
+    end
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

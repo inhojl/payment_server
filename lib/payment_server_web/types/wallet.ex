@@ -13,5 +13,4 @@ defmodule PaymentServerWeb.Types.Wallet do
     field :currency, :string
     field :balance, :decimal
   end
-
 end

@@ -8,5 +8,4 @@ defmodule PaymentServerWeb.ChannelCase do
       @endpoint PaymentServerWeb.Endpoint
     end
   end
-
 end

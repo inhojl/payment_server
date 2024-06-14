@@ -29,5 +29,4 @@ defmodule PaymentServer.Accounts.Transaction do
     |> cast(attrs, @required_params)
     |> validate_required(@required_params)
   end
-
 end

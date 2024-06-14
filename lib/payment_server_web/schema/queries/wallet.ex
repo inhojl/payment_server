@@ -33,5 +33,4 @@ defmodule PaymentServerWeb.Schema.Queries.Wallet do
       resolve &Resolvers.Wallet.calculate_total_worth/2
     end
   end
-
 end

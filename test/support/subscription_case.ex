@@ -1,5 +1,4 @@
 defmodule PaymentServerWeb.SubscriptionCase do
-
   @moduledoc """
   Test Case for GraphQL subscription
   """
@@ -22,7 +21,6 @@ defmodule PaymentServerWeb.SubscriptionCase do
 
         {:ok, %{socket: socket}}
       end
-
     end
   end
 end

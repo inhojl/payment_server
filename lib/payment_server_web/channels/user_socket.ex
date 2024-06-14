@@ -9,5 +9,4 @@ defmodule PaymentServerWeb.UserSocket do
   def id(_socket) do
     # IO.puts(socket[:id])
   end
-
 end

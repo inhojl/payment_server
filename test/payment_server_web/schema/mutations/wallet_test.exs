@@ -22,11 +22,13 @@ defmodule PaymentServerWeb.Schema.Mutations.WalletTest do
 
   describe "@create_wallet" do
     test "create wallet with user id", %{user1: user} do
-      assert {:ok, %{data: data}} = Absinthe.run(@create_wallet, Schema,
-      variables: %{
-        "userId" => user.id,
-        "currency" => "AUD"
-      })
+      assert {:ok, %{data: data}} =
+               Absinthe.run(@create_wallet, Schema,
+                 variables: %{
+                   "userId" => user.id,
+                   "currency" => "AUD"
+                 }
+               )
 
       assert data["createWallet"]["userId"] === user.id
       assert data["createWallet"]["currency"] === "AUD"
@@ -62,19 +64,21 @@ defmodule PaymentServerWeb.Schema.Mutations.WalletTest do
       recipient_wallet = Enum.at(recipient.wallets, 0)
 
       transaction_amount = Decimal.new("100")
-      {:ok, %{data: data}} = Absinthe.run(@send_money, Schema,
-      variables: %{
-        "senderId" => sender.id,
-        "senderCurrency" => to_string(sender_wallet.currency),
-        "recipientId" => recipient.id,
-        "recipientCurrency" => to_string(recipient_wallet.currency),
-        "amount" => to_string(transaction_amount)
-      })
+
+      {:ok, %{data: data}} =
+        Absinthe.run(@send_money, Schema,
+          variables: %{
+            "senderId" => sender.id,
+            "senderCurrency" => to_string(sender_wallet.currency),
+            "recipientId" => recipient.id,
+            "recipientCurrency" => to_string(recipient_wallet.currency),
+            "amount" => to_string(transaction_amount)
+          }
+        )
 
       updated_sender_balance = Decimal.new(data["sendMoney"]["balance"])
 
       assert updated_sender_balance === Decimal.sub(sender_wallet.balance, transaction_amount)
     end
   end
-
 end

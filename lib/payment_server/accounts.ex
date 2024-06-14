@@ -12,7 +12,6 @@ defmodule PaymentServer.Accounts do
   alias PaymentServer.Accounts.Transaction
   alias PaymentServer.Accounts.Multis.SendMoney
 
-
   def list_users(params) do
     {:ok, Actions.all(User, params)}
   end
@@ -53,15 +52,17 @@ defmodule PaymentServer.Accounts do
     Wallet.changeset(wallet, attrs)
   end
 
-  defdelegate send_money(sender_wallet, recipient_wallet, transaction_amount), to: SendMoney, as: :multi
+  defdelegate send_money(sender_wallet, recipient_wallet, transaction_amount),
+    to: SendMoney,
+    as: :multi
 
   def calculate_total_worth(user_id, to_currency) when is_atom(to_currency) do
     with {:ok, %{wallets: wallets}} <- find_user(%{id: user_id, preload: :wallets}) do
       Enum.reduce_while(wallets, {:ok, Decimal.new("0")}, fn %{
-          currency: from_currency,
-          balance: balance
-        },
-        {:ok, total_worth} ->
+                                                               currency: from_currency,
+                                                               balance: balance
+                                                             },
+                                                             {:ok, total_worth} ->
         case convert_wallet_total(from_currency, to_currency, balance) do
           {:ok, wallet_total} -> {:cont, {:ok, Decimal.add(total_worth, wallet_total)}}
           {:error, _} = error -> {:halt, error}
@@ -70,16 +71,20 @@ defmodule PaymentServer.Accounts do
     end
   end
 
-  def convert_wallet_total(from_currency, to_currency, balance) when from_currency === to_currency, do: {:ok, balance}
+  def convert_wallet_total(from_currency, to_currency, balance)
+      when from_currency === to_currency,
+      do: {:ok, balance}
+
   def convert_wallet_total(from_currency, to_currency, balance) do
-      case ExchangeRateServer.get_exchange_rate(from_currency, to_currency) do
-        {:ok, exchange_rate} -> {:ok, Decimal.mult(balance, exchange_rate)}
-        {:error, error} -> {:error, error}
-      end
+    case ExchangeRateServer.get_exchange_rate(from_currency, to_currency) do
+      {:ok, exchange_rate} -> {:ok, Decimal.mult(balance, exchange_rate)}
+      {:error, error} -> {:error, error}
+    end
   end
 
   def create_transaction(wallet, transaction_amount, type) do
     utc_now = DateTime.utc_now()
+
     recipient_transaction = %Transaction{
       user_id: wallet.user_id,
       wallet_id: wallet.id,
@@ -89,6 +94,7 @@ defmodule PaymentServer.Accounts do
       inserted_at: utc_now,
       updated_at: utc_now
     }
+
     {:ok, recipient_transaction}
   end
 end

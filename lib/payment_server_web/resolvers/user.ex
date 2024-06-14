@@ -1,5 +1,4 @@
 defmodule PaymentServerWeb.Resolvers.User do
-
   alias PaymentServer.Accounts
 
   def find(%{email: email}, _) do
@@ -14,7 +13,6 @@ defmodule PaymentServerWeb.Resolvers.User do
     {:error, ErrorMessage.bad_request("Specify arguments")}
   end
 
-
   def all(params, _) do
     Accounts.list_users(params)
   end
@@ -22,5 +20,4 @@ defmodule PaymentServerWeb.Resolvers.User do
   def create(params, _) do
     Accounts.create_user(params)
   end
-
 end

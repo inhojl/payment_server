@@ -6,5 +6,4 @@ defmodule PaymentServerWeb.Types.ExchangeRate do
     field :to_currency, :string
     field :exchange_rate, :decimal
   end
-
 end

@@ -9,6 +9,4 @@ defmodule PaymentServerWeb.Schema.Mutations.User do
       resolve &Resolvers.User.create/2
     end
   end
-
-
 end

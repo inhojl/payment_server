@@ -4,7 +4,6 @@ defmodule PaymentServerWeb.Schema.Queries.User do
   alias PaymentServerWeb.Resolvers
 
   object :user_queries do
-
     field :user, :user do
       arg :id, :integer_id
       arg :email, :string
@@ -21,7 +20,5 @@ defmodule PaymentServerWeb.Schema.Queries.User do
 
       resolve &Resolvers.User.all/2
     end
-
   end
-
 end

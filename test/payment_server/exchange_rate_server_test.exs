@@ -14,5 +14,4 @@ defmodule PaymentServer.ExchangeRateServerTest do
       assert ExchangeRateServer.get_exchange_rate(:USD, :AUD) === {:ok, exchange_rate}
     end
   end
-
 end

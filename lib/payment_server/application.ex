@@ -10,19 +10,20 @@ defmodule PaymentServer.Application do
 
   @impl true
   def start(_type, _args) do
-    children = [
-      PaymentServerWeb.Telemetry,
-      PaymentServer.Repo,
-      {DNSCluster, query: Application.get_env(:payment_server, :dns_cluster_query) || :ignore},
-      {Phoenix.PubSub, name: PaymentServer.PubSub},
-      # Start the Finch HTTP client for sending emails
-      {Finch, name: PaymentServer.Finch},
-      # Start a worker by calling: PaymentServer.Worker.start_link(arg)
-      # {PaymentServer.Worker, arg},
-      # Start to serve requests, typically the last entry
-      PaymentServerWeb.Endpoint,
-      {Absinthe.Subscription, PaymentServerWeb.Endpoint},
-    ] ++ init_exchange_rate_servers(Mix.env())
+    children =
+      [
+        PaymentServerWeb.Telemetry,
+        PaymentServer.Repo,
+        {DNSCluster, query: Application.get_env(:payment_server, :dns_cluster_query) || :ignore},
+        {Phoenix.PubSub, name: PaymentServer.PubSub},
+        # Start the Finch HTTP client for sending emails
+        {Finch, name: PaymentServer.Finch},
+        # Start a worker by calling: PaymentServer.Worker.start_link(arg)
+        # {PaymentServer.Worker, arg},
+        # Start to serve requests, typically the last entry
+        PaymentServerWeb.Endpoint,
+        {Absinthe.Subscription, PaymentServerWeb.Endpoint}
+      ] ++ init_exchange_rate_servers(Mix.env())
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
@@ -38,14 +39,13 @@ defmodule PaymentServer.Application do
     :ok
   end
 
+  defp init_exchange_rate_servers(:test), do: []
 
-defp init_exchange_rate_servers(:test), do: []
-defp init_exchange_rate_servers(_) do
-  for from_currency <- Config.currencies(),
-      to_currency <- Config.currencies(),
-      from_currency !== to_currency do
-    ExchangeRateServer.child_spec(from_currency, to_currency)
+  defp init_exchange_rate_servers(_) do
+    for from_currency <- Config.currencies(),
+        to_currency <- Config.currencies(),
+        from_currency !== to_currency do
+      ExchangeRateServer.child_spec(from_currency, to_currency)
+    end
   end
-end
-
 end

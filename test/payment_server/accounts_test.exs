@@ -6,13 +6,12 @@ defmodule PaymentServer.AccountsTest do
   alias PaymentServer.ExchangeRateServer
 
   setup do
-
     {:ok, _pid} = ExchangeRateServer.start_link(:USD, :AUD)
     {:ok, _pid} = ExchangeRateServer.start_link(:USD, :KRW)
     {:ok, _pid} = ExchangeRateServer.start_link(:KRW, :AUD)
 
-    users_fixture()
-    |> Map.put_new(:exchange_rate, exchange_rate_fixture())
+    config = users_fixture()
+    Map.put_new(config, :exchange_rate, exchange_rate_fixture())
   end
 
   describe "&list_users/1" do
@@ -34,7 +33,6 @@ defmodule PaymentServer.AccountsTest do
       assert {:ok, user} = Accounts.find_user(%{email: user2.email})
       assert user.id === user2.id
     end
-
   end
 
   describe "&list_wallets/1" do
@@ -72,12 +70,14 @@ defmodule PaymentServer.AccountsTest do
   describe "&calculate_total_worth/2" do
     test "reduce over wallets and return total worth", %{user1: user1} do
       assert {:ok, total_worth} = Accounts.calculate_total_worth(user1.id, :AUD)
-      expected_total_worth = Enum.reduce(user1.wallets, Decimal.new("0"), fn wallet, total ->
-        wallet.currency
-        |> Accounts.convert_wallet_total(:AUD, wallet.balance)
-        |> then(fn {:ok, wallet_total} -> wallet_total end)
-        |> Decimal.add(total)
-      end)
+
+      expected_total_worth =
+        Enum.reduce(user1.wallets, Decimal.new("0"), fn wallet, total ->
+          wallet.currency
+          |> Accounts.convert_wallet_total(:AUD, wallet.balance)
+          |> then(fn {:ok, wallet_total} -> wallet_total end)
+          |> Decimal.add(total)
+        end)
 
       assert total_worth === expected_total_worth
     end
@@ -90,34 +90,50 @@ defmodule PaymentServer.AccountsTest do
       assert sender_wallet.currency === recipient_wallet.currency
 
       transaction_amount = Decimal.new("100")
-      {:ok, updated_sender_wallet} = Accounts.send_money(sender_wallet, recipient_wallet, transaction_amount)
 
-      {:ok, updated_recipient_wallet} = Accounts.find_wallet(%{
+      {:ok, updated_sender_wallet} =
+        Accounts.send_money(sender_wallet, recipient_wallet, transaction_amount)
+
+      {:ok, updated_recipient_wallet} =
+        Accounts.find_wallet(%{
           user_id: user2.id,
           currency: recipient_wallet.currency
         })
 
-      assert updated_sender_wallet.balance === Decimal.sub(sender_wallet.balance, transaction_amount)
-      assert updated_recipient_wallet.balance === Decimal.add(recipient_wallet.balance, transaction_amount)
+      assert updated_sender_wallet.balance ===
+               Decimal.sub(sender_wallet.balance, transaction_amount)
+
+      assert updated_recipient_wallet.balance ===
+               Decimal.add(recipient_wallet.balance, transaction_amount)
     end
 
-    test "send money between different currencies", %{user1: user1, user2: user2, exchange_rate: exchange_rate} do
+    test "send money between different currencies", %{
+      user1: user1,
+      user2: user2,
+      exchange_rate: exchange_rate
+    } do
       sender_wallet = Enum.at(user1.wallets, 0)
       recipient_wallet = Enum.at(user2.wallets, 1)
       assert sender_wallet.currency !== recipient_wallet.currency
 
       transaction_amount = Decimal.new("100")
-      {:ok, updated_sender_wallet} = Accounts.send_money(sender_wallet, recipient_wallet, transaction_amount)
 
-      {:ok, updated_recipient_wallet} = Accounts.find_wallet(%{
+      {:ok, updated_sender_wallet} =
+        Accounts.send_money(sender_wallet, recipient_wallet, transaction_amount)
+
+      {:ok, updated_recipient_wallet} =
+        Accounts.find_wallet(%{
           user_id: user2.id,
           currency: recipient_wallet.currency
         })
 
       recipient_transaction_amount = Decimal.mult(transaction_amount, exchange_rate)
-      assert updated_sender_wallet.balance === Decimal.sub(sender_wallet.balance, transaction_amount)
-      assert updated_recipient_wallet.balance === Decimal.add(recipient_wallet.balance, recipient_transaction_amount)
+
+      assert updated_sender_wallet.balance ===
+               Decimal.sub(sender_wallet.balance, transaction_amount)
+
+      assert updated_recipient_wallet.balance ===
+               Decimal.add(recipient_wallet.balance, recipient_transaction_amount)
     end
   end
-
 end

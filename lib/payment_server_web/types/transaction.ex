@@ -8,5 +8,4 @@ defmodule PaymentServerWeb.Types.Transaction do
     field :transaction_amount, :decimal
     field :transaction_type, :string
   end
-
 end

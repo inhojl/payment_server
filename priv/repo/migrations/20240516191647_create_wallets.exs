@@ -10,7 +10,7 @@ defmodule PaymentServer.Repo.Migrations.CreateWalletsTable do
       timestamps()
     end
 
-    create index :wallets, [:user_id]
-    create unique_index :wallets, [:currency, :user_id]
+    create index(:wallets, [:user_id])
+    create unique_index(:wallets, [:currency, :user_id])
   end
 end

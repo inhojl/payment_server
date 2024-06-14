@@ -23,6 +23,7 @@ currencies = Config.currencies()
 
 insert_fake_wallet = fn id, used_currencies ->
   available_currencies = currencies -- used_currencies
+
   fake_wallet = %Wallet{
     user_id: id,
     currency: Enum.random(currencies),
@@ -42,7 +43,6 @@ ids
 IO.puts("Inserted 1 fake wallet per fake user")
 
 half_count = div(length(ids), 2)
-
 
 ids
 |> Enum.take(half_count)

@@ -31,6 +31,4 @@ defmodule PaymentServer.Accounts.Wallet do
     |> where([w], w.currency == ^currency)
     |> lock("FOR UPDATE")
   end
-
-
 end
