@@ -27,7 +27,8 @@ defmodule PaymentServerWeb.Schema.Mutations.WalletTest do
                  variables: %{
                    "userId" => user.id,
                    "currency" => "AUD"
-                 }
+                 },
+                 context: %{secret_key: "Imsecret"}
                )
 
       assert data["createWallet"]["userId"] === to_string(user.id)
@@ -73,7 +74,8 @@ defmodule PaymentServerWeb.Schema.Mutations.WalletTest do
             "recipientId" => recipient.id,
             "recipientCurrency" => to_string(recipient_wallet.currency),
             "amount" => to_string(transaction_amount)
-          }
+          },
+          context: %{secret_key: "Imsecret"}
         )
 
       updated_sender_balance = Decimal.new(data["sendMoney"]["balance"])

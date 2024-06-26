@@ -42,6 +42,14 @@ defmodule PaymentServerWeb.Schema do
     [Absinthe.Middleware.Dataloader] ++ Absinthe.Plugin.defaults()
   end
 
+  def middleware(middleware, _, %{identifier: identifier}) when identifier in [:mutation] do
+    if Mix.env === :test do
+      middleware ++ [Middlewares.ErrorHandler]
+    else
+      [Middlewares.AuthMiddleware | middleware] ++ [Middlewares.ErrorHandler]
+    end
+  end
+
   def middleware(middleware, _, _) do
     middleware ++ [Middlewares.ErrorHandler]
   end

@@ -3,6 +3,7 @@ defmodule PaymentServerWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug AuthPlug
   end
 
   scope "/" do

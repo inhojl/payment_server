@@ -1,6 +1,8 @@
 defmodule PaymentServerWeb.Middlewares.ErrorHandler do
-  alias Ecto.Changeset
   @behaviour Absinthe.Middleware
+
+  alias Ecto.Changeset
+  alias Utils.ErrorUtils
 
   require Logger
 
@@ -10,36 +12,57 @@ defmodule PaymentServerWeb.Middlewares.ErrorHandler do
     %{resolution | errors: transformed_errors}
   end
 
+  defp transform_error(%Changeset{
+         errors: [email: {_, [constraint: :unique, constraint_name: _]}] = errors
+       }) do
+    errors
+    |> format_changeset_errors()
+    |> tap(&Logger.debug/1)
+    |> then(fn message -> ErrorUtils.conflict(message) end)
+  end
+
+  defp transform_error(%Changeset{errors: errors} = changeset) do
+    errors
+    |> format_changeset_errors()
+    |> tap(&Logger.debug/1)
+    |> then(fn message -> ErrorUtils.bad_request(message, changeset.changes) end)
+  end
+
   defp transform_error(%ErrorMessage{details: {:internal, _}} = error),
     do: handle_internal_error(error)
 
   defp transform_error(%ErrorMessage{details: :internal} = error),
     do: handle_internal_error(error)
 
-  defp transform_error(%ErrorMessage{} = error) do
-    Logger.debug(ErrorMessage.to_jsonable_map(error))
-
-    %{
-      code: error.code,
-      message: error.message
-    }
+  defp transform_error(%ErrorMessage{code: :not_found, details: %{params: %{id: id}}} = error) do
+    ErrorUtils.not_found(error.message, %{id: id})
   end
 
-  defp transform_error(%Changeset{errors: errors}) do
-    errors
-    |> Enum.map_join(", ", fn {field, {field_error_message, _}} ->
-      "#{field}: #{field_error_message}"
-    end)
-    |> tap(&Logger.debug/1)
-    |> then(&%{message: &1})
+  defp transform_error(%ErrorMessage{} = error) do
+    ErrorMessage.to_jsonable_map(error)
+  end
+
+  defp transform_error(:unauthorized) do
+    ErrorUtils.unauthorized("unauthorized")
+  end
+
+  defp transform_error(error) do
+    handle_internal_error(error)
+  end
+
+  defp handle_internal_error(%ErrorMessage{} = error) do
+    Logger.error(error)
+    ErrorMessage.to_jsonable_map(error)
   end
 
   defp handle_internal_error(error) do
-    Logger.error(ErrorMessage.to_jsonable_map(error))
+    Logger.error(error)
+    ErrorUtils.internal_server_error("internal server error")
+  end
 
-    %{
-      code: :internal_server_error,
-      message: "Internal server error"
-    }
+  defp format_changeset_errors(errors) do
+    Enum.map_join(errors, ", ", fn {field, {field_error_message, _}} ->
+      "#{field} #{field_error_message}"
+    end)
   end
 end

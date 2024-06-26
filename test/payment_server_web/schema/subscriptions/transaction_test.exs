@@ -48,6 +48,8 @@ defmodule PaymentServerWeb.Schema.Subscriptions.TransactionTest do
       user1: sender,
       user2: recipient
     } do
+      socket = put_in(socket.assigns.absinthe.opts[:context][:secret_key], "Imsecret")
+
       ref = push_doc(socket, @transaction_subscription, variables: %{"userId" => sender.id})
       assert_reply ref, :ok, %{subscriptionId: subscription_id}
 
